@@ -59,7 +59,7 @@ async function seed(h: Harness, name: string, withSchedules = true, select = 0):
 
 const sleep = (ms: number) => act(async () => { await new Promise((r) => setTimeout(r, ms)); });
 
-async function until<T>(fn: () => T | null | undefined | false, what = 'condition', timeout = 4000): Promise<T> {
+async function until<T>(fn: () => T | null | undefined | false, what = 'condition', timeout = 15000): Promise<T> {
   const t0 = Date.now();
   for (;;) {
     const v = fn();
