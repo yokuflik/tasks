@@ -91,3 +91,13 @@
 .scr-empty__bloom { font-size: 2.5rem; line-height: 1; }
 .scr-empty__name { color: var(--primary); font-weight: 600; margin: 0; }
 .scr-nav { border-start-start-radius: var(--radius); border-start-end-radius: var(--radius); box-shadow: 0 -4px 20px rgb(194 24 91 / 10%); }
+
+/* פתיחה ראשונה: לב גדול */
+.scr-welcome { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-4); background: var(--surface); animation: scr-welcome-in 0.4s ease-out, scr-welcome-out 0.6s ease-in 3.4s forwards; }
+.scr-welcome__heart { font-size: 40vmin; line-height: 1; animation: scr-heartbeat 1.1s ease-in-out infinite; }
+.scr-welcome__text { margin: 0; font-size: 2rem; font-weight: 700; text-align: center; animation: scr-welcome-text 0.8s ease-out 0.3s both; }
+@keyframes scr-heartbeat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.18); } 30% { transform: scale(1); } 45% { transform: scale(1.12); } 60% { transform: scale(1); } }
+@keyframes scr-welcome-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scr-welcome-out { to { opacity: 0; } }
+@keyframes scr-welcome-text { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .scr-welcome, .scr-welcome__heart, .scr-welcome__text { animation: none; } }
