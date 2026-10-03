@@ -145,7 +145,8 @@ export function WeekScreen(p: ScreenProps): JSX.Element {
       const c = press.current;
       if (c && c.blockId === block.id && !c.dragging) {
         c.longHandled = true;
-        if (block.kind === 'sleep' || isBlockMovable(block, editCtx) || block.locked) void p.actions.setBlockLocked(block.id, !block.locked);
+        setNotice(undefined);
+        setOpen(block.id);
       }
     }, 450);
     press.current = cur;
@@ -176,9 +177,6 @@ export function WeekScreen(p: ScreenProps): JSX.Element {
         const err = await p.actions.moveBlock(d.blockId, d.date, d.startMin);
         setNotice(err);
       }
-    } else if (!c.longHandled) {
-      setNotice(undefined);
-      setOpen(c.blockId);
     }
   };
 

@@ -4,7 +4,7 @@ import { categoryStyleVars } from './tokens';
 
 /** סגנון inline כמילון. מאפשר גם משתני CSS. */
 export type StyleMap = Record<string, string | number>;
-import { formatDuration, formatRange } from './format';
+import { formatDuration, formatRange, formatTime } from './format';
 import { Icon } from './icons';
 
 const EFFORT_LABEL: Record<Effort, string> = { heavy: 'כבד', medium: 'בינוני', light: 'קל' };
@@ -112,7 +112,10 @@ export function SleepBand(p: SleepBandProps): JSX.Element {
       <Icon name="moon" size={16} />
       <span>שינה</span>
       <span class="ui-sleep-band__time">
-        <bdi dir="ltr" class="ui-sleep-band__range">{formatRange(p.startMin, p.endMin)}</bdi>
+        <bdi dir="ltr" class="ui-sleep-band__range">
+          <span class="ui-sleep-band__start">{formatTime(p.startMin)}</span>
+          <span class="ui-sleep-band__end">{formatTime(p.endMin)}</span>
+        </bdi>
         <bdi class="ui-sleep-band__dur">{formatDuration(p.endMin - p.startMin)}</bdi>
       </span>
       {p.locked && <Icon name="lock" size={14} title="נעול" />}

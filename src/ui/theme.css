@@ -181,7 +181,9 @@ body {
 .ui-sleep-band .ui-icon { color: var(--sleep-accent); }
 .ui-sleep-band { flex-wrap: wrap; }
 .ui-sleep-band__time { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: var(--space-2); margin-inline-start: auto; font-variant-numeric: tabular-nums; }
-.ui-sleep-band__range { unicode-bidi: isolate; direction: ltr; white-space: nowrap; }
+.ui-sleep-band__range { unicode-bidi: isolate; direction: ltr; white-space: nowrap; display: flex; flex-direction: column; }
+.ui-sleep-band__start::after { content: ' –'; }
+.ui-sleep-band__start { margin-inline-start: 6px; }
 .ui-sleep-band__dur { unicode-bidi: isolate; white-space: nowrap; opacity: 0.85; }
 
 /* נסיעה */

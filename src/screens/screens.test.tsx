@@ -131,9 +131,11 @@ function pointer(type: string, init: { x?: number; y?: number } = {}): Event {
 async function fire(el: Element, type: string, init?: { x?: number; y?: number }): Promise<void> {
   await act(async () => { el.dispatchEvent(pointer(type, init)); });
 }
+/** פתיחת פרטי בלוק: רק לחיצה ארוכה. */
 async function tapBlock(blockId: string): Promise<void> {
   const el = $(`[data-block="${blockId}"]`);
   await fire(el, 'pointerdown');
+  await sleep(520);
   await fire(el, 'pointerup');
 }
 
@@ -483,7 +485,7 @@ describe('תצוגת שבוע', () => {
     await until(async () => !(await selectedFromStorage(h, week.id)).schedule.blocks.find((b) => b.id === study.id)?.locked, 'unlocked');
   });
 
-  it('לחיצה ארוכה נועלת בלי לפתוח פרטים', async () => {
+  it('לחיצה קצרה לא פותחת פרטים, לחיצה ארוכה פותחת', async () => {
     const h = await makeHarness();
     const { week } = await seed(h, 'morning-shifts');
     await mountApp(h);
@@ -492,10 +494,10 @@ describe('תצוגת שבוע', () => {
     const study = schedule.blocks.find((b) => b.taskId === 't-study')!;
     const el = $(`[data-block="${study.id}"]`);
     await fire(el, 'pointerdown');
-    await sleep(520);
     await fire(el, 'pointerup');
-    await until(async () => (await selectedFromStorage(h, week.id)).schedule.blocks.find((b) => b.id === study.id)?.locked, 'long press lock');
     expect(host!.querySelector('[role="dialog"]')).toBeNull();
+    await tapBlock(study.id);
+    await until(() => host!.querySelector('[role="dialog"]'), 'long press opens details');
   });
 
   it('גרירה לעמודה ושעה אחרות מזיזה את הבלוק', async () => {
