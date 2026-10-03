@@ -5,18 +5,21 @@ import { Button, Card } from '../ui';
 import { readText } from './entry';
 import type { ScreenProps } from './types';
 
+/** האחסון נשאר בדקות; המסך מציג ומקבל שעות (גם חלקיות, למשל 7.5). */
+const minToHours = (m: number): string => String(Math.round((m / 60) * 100) / 100);
+
 export function SettingsScreen(p: ScreenProps): JSX.Element {
   const s = p.data.settings;
-  const [minSleep, setMinSleep] = useState(String(s.minSleepMin));
-  const [target, setTarget] = useState(String(s.targetSleepMin));
+  const [minSleep, setMinSleep] = useState(minToHours(s.minSleepMin));
+  const [target, setTarget] = useState(minToHours(s.targetSleepMin));
   const [brk, setBrk] = useState(String(s.minBreakMin));
   const [warn, setWarn] = useState(s.warnOnSpecialDays);
   const [msg, setMsg] = useState<string | undefined>();
   const reminder = backupReminder(s.lastBackupAt, p.services.now());
 
   const saveSettings = () => {
-    const min = Number(minSleep);
-    const tgt = Number(target);
+    const min = Math.round(Number(minSleep) * 60);
+    const tgt = Math.round(Number(target) * 60);
     const b = Number(brk);
     if (![min, tgt, b].every(Number.isFinite) || min <= 0 || tgt < min || b < 0) {
       setMsg('ערכים לא תקינים: היעד חייב להיות לפחות כמו המינימום');
@@ -70,11 +73,11 @@ export function SettingsScreen(p: ScreenProps): JSX.Element {
       <Card>
         <h2 class="scr-h2">חוקים</h2>
         <div class="scr-form-row">
-          <label>מינימום שינה (דקות)
-            <input name="min-sleep" type="number" inputMode="numeric" value={minSleep} onInput={(e) => setMinSleep((e.currentTarget as HTMLInputElement).value)} />
+          <label>מינימום שינה (שעות)
+            <input name="min-sleep" type="number" inputMode="decimal" step="0.5" min="0" value={minSleep} onInput={(e) => setMinSleep((e.currentTarget as HTMLInputElement).value)} />
           </label>
-          <label>יעד שינה (דקות)
-            <input name="target-sleep" type="number" inputMode="numeric" value={target} onInput={(e) => setTarget((e.currentTarget as HTMLInputElement).value)} />
+          <label>יעד שינה (שעות)
+            <input name="target-sleep" type="number" inputMode="decimal" step="0.5" min="0" value={target} onInput={(e) => setTarget((e.currentTarget as HTMLInputElement).value)} />
           </label>
           <label>הפסקה מינימלית (דקות)
             <input name="min-break" type="number" inputMode="numeric" value={brk} onInput={(e) => setBrk((e.currentTarget as HTMLInputElement).value)} />

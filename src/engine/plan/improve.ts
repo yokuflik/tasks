@@ -69,10 +69,11 @@ export function improve(state: PlanState, rng: Rng): { passes: number; evaluatio
     const len = piece.end - piece.start;
     const { from, to } = boundsFor(state, deps, piece);
     const [origStart, origEnd] = [piece.start, piece.end];
-    release(state.ctx.grid, origStart, origEnd);
+    const pad = state.ctx.pads.get(piece.taskId) ?? 0;
+    release(state.ctx.grid, origStart, origEnd, pad);
     let best = current;
     let bestStart = origStart;
-    for (const s of candidateStarts(state.ctx.grid, mask, len, from, to)) {
+    for (const s of candidateStarts(state.ctx.grid, mask, len, from, to, pad)) {
       if (s === origStart) continue;
       if (evaluations >= MAX_EVALUATIONS) break;
       piece.start = s;
@@ -85,7 +86,7 @@ export function improve(state: PlanState, rng: Rng): { passes: number; evaluatio
     }
     piece.start = bestStart;
     piece.end = bestStart + len;
-    occupyTask(state.ctx.grid, piece.start, piece.end);
+    occupyTask(state.ctx.grid, piece.start, piece.end, pad);
     if (bestStart === origStart) return false;
     current = best;
     return true;
@@ -98,11 +99,13 @@ export function improve(state: PlanState, rng: Rng): { passes: number; evaluatio
     const len = a.end - a.start;
     if (b.end - b.start !== len || a.taskId === b.taskId) return false;
     if (a.start < b.end && b.start < a.end) return false;
+    const pad = state.ctx.pads.get(a.taskId) ?? 0;
+    if (pad !== (state.ctx.pads.get(b.taskId) ?? 0)) return false;
     const [as, bs] = [a.start, b.start];
-    release(state.ctx.grid, as, as + len);
-    release(state.ctx.grid, bs, bs + len);
+    release(state.ctx.grid, as, as + len, pad);
+    release(state.ctx.grid, bs, bs + len, pad);
     let done = false;
-    if (canPlace(state.ctx.grid, maskA, bs, bs + len) && canPlace(state.ctx.grid, maskB, as, as + len)) {
+    if (canPlace(state.ctx.grid, maskA, bs, bs + len, pad) && canPlace(state.ctx.grid, maskB, as, as + len, pad)) {
       a.start = bs;
       a.end = bs + len;
       b.start = as;
@@ -121,8 +124,8 @@ export function improve(state: PlanState, rng: Rng): { passes: number; evaluatio
         b.end = bs + len;
       }
     }
-    occupyTask(state.ctx.grid, a.start, a.end);
-    occupyTask(state.ctx.grid, b.start, b.end);
+    occupyTask(state.ctx.grid, a.start, a.end, pad);
+    occupyTask(state.ctx.grid, b.start, b.end, pad);
     return done;
   };
 

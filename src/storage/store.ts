@@ -47,6 +47,9 @@ export interface Storage {
   close(): void;
 }
 
+const CATEGORY_ORDER = new Map(DEFAULT_CATEGORIES.map((c, i) => [c.id, i]));
+const byCategoryOrder = (a: Category, b: Category) =>
+  (CATEGORY_ORDER.get(a.id) ?? Infinity) - (CATEGORY_ORDER.get(b.id) ?? Infinity) || byId(a, b);
 const byId = <T extends { id: string }>(a: T, b: T) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
 
 export async function openStorage(opts: OpenOptions = {}): Promise<Storage> {
@@ -76,7 +79,7 @@ export async function openStorage(opts: OpenOptions = {}): Promise<Storage> {
 
   const readAll = async (): Promise<StoredData> => ({
     settings: (await db.get('settings', SETTINGS_KEY)) as Settings,
-    categories: ((await db.getAll('categories')) as Category[]).sort(byId),
+    categories: ((await db.getAll('categories')) as Category[]).sort(byCategoryOrder),
     tasks: ((await db.getAll('tasks')) as Task[]).sort(byId),
     weeks: ((await db.getAll('weeks')) as Week[]).sort(byId),
   });
@@ -101,7 +104,7 @@ export async function openStorage(opts: OpenOptions = {}): Promise<Storage> {
     },
 
     async listCategories() {
-      return ((await db.getAll('categories')) as Category[]).sort(byId);
+      return ((await db.getAll('categories')) as Category[]).sort(byCategoryOrder);
     },
     async saveCategory(category) {
       await db.put('categories', category);

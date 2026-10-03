@@ -63,7 +63,9 @@
 .scr-block.is-done { opacity: 0.5; }
 .scr-block.is-ghost { background: var(--primary); opacity: 0.35; border-radius: 6px; pointer-events: none; z-index: 2; }
 .scr-warn { position: absolute; inset-block-start: 2px; inset-inline-end: 2px; color: #c79a1d; }
-.scr-block .ui-time-block, .scr-block .ui-sleep-band { block-size: 100%; box-sizing: border-box; overflow: hidden; }
+.scr-block .ui-sleep-band { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 2px; font-size: 0.75rem; }
+.scr-block .ui-sleep-band__time { flex-direction: column; margin-inline-start: 0; }
+.scr-block .ui-time-block, .scr-block .ui-sleep-band, .scr-block .ui-travel-band { block-size: 100%; box-sizing: border-box; overflow: hidden; }
 
 .scr-sheet { position: fixed; inset: 0; background: rgb(0 0 0 / 45%); display: flex; align-items: flex-end; z-index: 20; }
 .scr-sheet__panel { inline-size: 100%; background: var(--surface-raised, var(--surface)); border-radius: var(--radius) var(--radius) 0 0; padding: var(--space-4); padding-block-end: calc(var(--space-4) + var(--safe-bottom)); display: flex; flex-direction: column; gap: var(--space-3); max-block-size: 80dvh; overflow: auto; }
@@ -88,4 +90,4 @@
 .scr-brand__hello { font-size: 0.9375rem; color: var(--text-muted); }
 .scr-empty__bloom { font-size: 2.5rem; line-height: 1; }
 .scr-empty__name { color: var(--primary); font-weight: 600; margin: 0; }
-.scr-nav { border-start-start-radius: var(--radius); border-start-end-radius: var(--radius); box-shadow: 0 -4px 20px rgb(176 56 106 / 10%); }
+.scr-nav { border-start-start-radius: var(--radius); border-start-end-radius: var(--radius); box-shadow: 0 -4px 20px rgb(194 24 91 / 10%); }

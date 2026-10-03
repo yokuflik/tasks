@@ -53,7 +53,8 @@ describe('רכיבי בסיס', () => {
   it('אייקון: כל אייקוני הקטגוריות קיימים, ושם לא מוכר לא מקריס', () => {
     for (const c of DEFAULT_CATEGORIES) {
       const el = mount(<Icon name={c.icon} />);
-      expect(el.querySelector('path')?.getAttribute('d'), c.icon).toBeTruthy();
+      if (/\p{Extended_Pictographic}/u.test(c.icon)) expect(el.textContent).toBe(c.icon);
+      else expect(el.querySelector('path')?.getAttribute('d'), c.icon).toBeTruthy();
     }
     expect(mount(<Icon name="nope" />).querySelector('path')).toBeTruthy();
   });

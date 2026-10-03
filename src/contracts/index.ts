@@ -12,7 +12,7 @@
 export const CONTRACT_VERSION = 1;
 /** גודל משבצת במנוע השיבוץ. */
 export const GRID_MINUTES = 15;
-export const MAX_CATEGORIES = 10;
+export const MAX_CATEGORIES = 11;
 /** 0 = יום ראשון. */
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 export const WEEK_START: Weekday = 0;
@@ -72,6 +72,8 @@ export interface Task {
   notes?: string;
   categoryId: Id;
   durationMin: Minutes;
+  /** נסיעה לכל כיוון (דקות), מחוץ למשך. עבודה: תמיד 20. */
+  travelMin?: Minutes;
   priority: Priority;
   dueDate?: IsoDate;
   weekId?: Id;

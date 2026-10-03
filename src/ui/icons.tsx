@@ -16,6 +16,7 @@ const PATHS: Record<string, string> = {
   grip: 'M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01',
   check: 'M5 12.5l4.5 4.5L19 7.5',
   warning: 'M12 4l9 16H3zM12 10v4M12 17h.01',
+  car: 'M5 15v-4l2-5h10l2 5v4M4 15h16v3H4zM7.5 13h.01M16.5 13h.01',
 };
 
 export type IconName = keyof typeof PATHS | (string & {});
@@ -27,6 +28,13 @@ export interface IconProps {
 }
 
 export function Icon({ name, size = 20, title }: IconProps): JSX.Element {
+  if (!(name in PATHS) && /\p{Extended_Pictographic}/u.test(name)) {
+    return (
+      <span class="ui-icon" data-icon={name} style={{ fontSize: `${size * 0.85}px`, lineHeight: 1 }} {...(title ? { role: 'img', 'aria-label': title } : { 'aria-hidden': true })}>
+        {name}
+      </span>
+    );
+  }
   const d = PATHS[name] ?? PATHS['palette']!;
   const a11y = title ? { role: 'img' as const, 'aria-label': title } : { 'aria-hidden': true as const };
   return (

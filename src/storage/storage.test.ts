@@ -150,7 +150,7 @@ describe('מיגרציית גרסאות סכמה', () => {
       },
     });
     await legacy.put('settings', DEFAULT_SETTINGS, 'main');
-    await legacy.put('categories', DEFAULT_CATEGORIES[0]);
+    await legacy.put('categories', DEFAULT_CATEGORIES.find((c) => c.id === 'work')!);
     await legacy.put('tasks', { id: 'old-task', title: 'ישנה' });
     legacy.close();
 
@@ -299,7 +299,7 @@ describe('ייבוא קובץ פגום נדחה בלי לפגוע בנתונים
     ['שבוע מפנה למשימה שאינה קיימת', (t) => mutate(t, (f) => { f.data.weeks[0].taskIds.push('ghost'); })],
     ['סידור נבחר לא קיים', (t) => mutate(t, (f) => { f.data.weeks[0].selectedScheduleId = 'ghost'; })],
     ['שעות שינה ברירת מחדל', (t) => mutate(t, (f) => { f.data.settings.sleepStart = 1380; })],
-    ['יותר מ-10 קטגוריות', (t) => mutate(t, (f) => { for (let i = 0; i < 11; i++) f.data.categories.push({ ...f.data.categories[0], id: `e${i}` }); })],
+    ['יותר מ-11 קטגוריות', (t) => mutate(t, (f) => { for (let i = 0; i < 12; i++) f.data.categories.push({ ...f.data.categories[0], id: `e${i}` }); })],
     ['קובץ קטוע', (t) => t.slice(0, t.length / 2)],
   ])('נדחה: %s', async (_name, corrupt) => {
     await load();

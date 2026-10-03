@@ -8,7 +8,7 @@
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 16px;
-  --shadow: 0 2px 4px rgb(176 56 106 / 6%), 0 8px 24px rgb(176 56 106 / 10%);
+  --shadow: 0 2px 4px rgb(194 24 91 / 6%), 0 8px 24px rgb(194 24 91 / 10%);
   --dur: 160ms;
   --tap: 44px;
   --safe-top: env(safe-area-inset-top, 0px);
@@ -145,6 +145,7 @@ body {
 
 /* בלוק זמן */
 .ui-time-block {
+  position: relative;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -161,8 +162,9 @@ body {
 }
 .ui-time-block.is-fixed { border: 2px solid var(--cat-accent); }
 .ui-time-block__title { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ui-time-block__time { font-size: 0.75rem; opacity: 0.9; font-variant-numeric: tabular-nums; }
-.ui-time-block .ui-icon { align-self: flex-end; opacity: 0.85; }
+.ui-time-block__time { unicode-bidi: isolate; direction: ltr; align-self: flex-start; font-size: 0.75rem; opacity: 0.9; font-variant-numeric: tabular-nums; }
+.ui-time-block .ui-icon { position: absolute; inset-block-start: 3px; inset-inline-end: 3px; inline-size: 12px; block-size: 12px; opacity: 0.85; }
+.ui-time-block__title { padding-inline-end: 14px; }
 
 /* שינה */
 .ui-sleep-band {
@@ -177,7 +179,27 @@ body {
   font-size: 0.875rem;
 }
 .ui-sleep-band .ui-icon { color: var(--sleep-accent); }
-.ui-sleep-band__time { margin-inline-start: auto; font-variant-numeric: tabular-nums; }
+.ui-sleep-band { flex-wrap: wrap; }
+.ui-sleep-band__time { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: var(--space-2); margin-inline-start: auto; font-variant-numeric: tabular-nums; }
+.ui-sleep-band__range { unicode-bidi: isolate; direction: ltr; white-space: nowrap; }
+.ui-sleep-band__dur { unicode-bidi: isolate; white-space: nowrap; opacity: 0.85; }
+
+/* נסיעה */
+.ui-travel-band {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 2px var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--border, currentColor);
+  background: transparent;
+  color: var(--text);
+  opacity: 0.75;
+  font-size: 0.75rem;
+}
+.ui-travel-band--compact { padding: 0 var(--space-1, 4px); min-block-size: 0; block-size: 100%; border-radius: 2px; font-size: 0.5625rem; line-height: 1; overflow: hidden; white-space: nowrap; }
+.ui-travel-band__time { margin-inline-start: auto; font-variant-numeric: tabular-nums; }
 
 /* שבת וחגים: סימון בלבד */
 .ui-holiday-badge {

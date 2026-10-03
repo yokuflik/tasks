@@ -1,6 +1,6 @@
 import { GRID_MINUTES } from '../../contracts';
 import type { IsoDate, ScheduleBlock, Settings, SleepShortfall } from '../../contracts';
-import { dayDiff } from './dates';
+import { addDays, dayDiff } from './dates';
 import { absToRange, freeRuns, occupy, OCCUPANT, rangeToAbs } from './grid';
 import type { Grid } from './grid';
 
@@ -45,6 +45,8 @@ export function planSleep(
   activeDates: readonly IsoDate[],
   settings: Pick<Settings, 'minSleepMin' | 'targetSleepMin'>,
   lockedBlocks: readonly ScheduleBlock[] = [],
+  /** התחלות (מוחלטות) של משמרות בוקר כולל נסיעה: השינה מסתיימת בדיוק בהן. */
+  morningStarts: readonly number[] = [],
 ): SleepPlan {
   const min = settings.minSleepMin;
   const target = Math.max(settings.targetSleepMin, min);
@@ -52,7 +54,25 @@ export function planSleep(
   const shortfalls: SleepShortfall[] = [];
   const lockedSleeps = lockedBlocks.filter((b) => b.kind === 'sleep').map((b) => rangeToAbs(grid, b.range));
 
-  for (const date of [...activeDates].sort()) {
+  const sortedDates = [...activeDates].sort();
+  // הלילה שלפני היום הראשון בשבוע נמצא לפני הרשת. אם יש משמרת בוקר ביום הראשון, השינה שלה נשמרת (נגמרת בנסיעה).
+  const first = sortedDates[0];
+  if (first !== undefined && dayDiff(grid.originDate, first) === 0) {
+    const m = morningStarts.filter((x) => x >= 0 && x < 720).sort((a, b) => a - b)[0];
+    if (m !== undefined) {
+      // לפני תחילת הרשת הכל פנוי; בתוכה השינה נעצרת בתפוסה הקרובה.
+      const run = freeRuns(grid, { ignoreOpen: true }).find((r) => r.end === m);
+      let start = run ? m - target : m;
+      if (run && run.start > 0) start = Math.max(start, run.start);
+      if (m - start > 0) {
+        occupy(grid, start, m, OCCUPANT.sleep);
+        const range = absToRange(grid, start, m);
+        blocks.push({ id: `sleep-${addDays(first, -1)}`, kind: 'sleep', range, locked: false });
+      }
+    }
+  }
+
+  for (const date of sortedDates) {
     const win = nightWindow(grid, date);
     const locked = lockedSleeps.filter((r) => r.start >= win.startAbs && r.start < win.endAbs);
     if (locked.length > 0) {
@@ -63,6 +83,25 @@ export function planSleep(
 
     const prefStart = dayDiff(grid.originDate, date) * 1440 + PREFERRED_SLEEP_START_MIN;
     let best: { start: number; len: number; tier: number; dist: number; avail: number } | null = null;
+    // משמרת בוקר: השינה מודבקת אליה (נגמרת ברגע שהנסיעה מתחילה), גם אם זה מקדים את 23:00.
+    const morning = morningStarts
+      .filter((m) => m >= win.anchorAbs - 180 + 240 && m < win.endAbs)
+      .sort((a, b) => a - b)[0];
+    if (morning !== undefined) {
+      const run = freeRuns(grid, { ignoreOpen: true }).find((r) => r.end === morning && r.end > win.startAbs);
+      const s0 = run ? Math.max(run.start, win.startAbs) : 0;
+      if (run && morning - s0 >= min) {
+        const len = Math.min(target, morning - s0);
+        occupy(grid, morning - len, morning, OCCUPANT.sleep);
+        blocks.push({
+          id: `sleep-${date}`,
+          kind: 'sleep',
+          range: absToRange(grid, morning - len, morning),
+          locked: false,
+        });
+        continue;
+      }
+    }
     for (const run of freeRuns(grid, { ignoreOpen: true })) {
       const s0 = Math.max(run.start, win.startAbs);
       if (s0 >= Math.min(run.end, win.endAbs)) continue;

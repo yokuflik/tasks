@@ -25,23 +25,23 @@ describe('העדפת שינה: 23:00, ואחרי משמרת לילה מיד אח
     expect(p.sleepBlocks.every((b) => b.range.startMin === 1380)).toBe(true);
   });
 
-  it('משמרת לילה שמסתיימת 07:30: השינה מתחילה בדיוק ב-07:30', () => {
+  it('משמרת לילה שמסתיימת 07:30: השינה מתחילה אחרי הנסיעה (08:00)', () => {
     const p = prepareWeek(input([shift('n', 0, 1350, 540)]));
-    expect(p.sleepBlocks[0]!.range).toEqual({ date: DAYS[1], startMin: 450, endMin: 450 + 540 });
+    expect(p.sleepBlocks[0]!.range).toEqual({ date: DAYS[1], startMin: 480, endMin: 480 + 540 });
     // לילות בלי משמרת חוזרים ל-23:00
     expect(p.sleepBlocks[3]!.range.startMin).toBe(1380);
   });
 
-  it('משמרות לילה של התרחיש: כל שינה מתחילה ברגע סיום המשמרת', () => {
+  it('משמרות לילה של התרחיש: כל שינה מתחילה אחרי הנסיעה שאחרי המשמרת', () => {
     const p = prepareWeek(loadScenario('night-shifts'));
     p.fixedBlocks.forEach((b, i) => {
-      expect(rangeToAbs(p.grid, p.sleepBlocks[i]!.range).start).toBe(rangeToAbs(p.grid, b.range).end);
+      expect(rangeToAbs(p.grid, p.sleepBlocks[i]!.range).start).toBe(rangeToAbs(p.grid, b.range).end + 30);
     });
   });
 
-  it('משמרת בוקר מקצרת ל-8 שעות מ-23:00 במקום להקדים', () => {
+  it('משמרת בוקר: השינה מודבקת לנסיעה שלפניה ומקדימה את 23:00', () => {
     const p = prepareWeek(input([shift('m', 1, 420, 480)], week({ activeDates: [DAYS[0]!, DAYS[1]!] })));
-    expect(p.sleepBlocks[0]!.range).toEqual({ date: DAYS[0], startMin: 1380, endMin: 1380 + 480 });
+    expect(p.sleepBlocks[0]!.range).toEqual({ date: DAYS[0], startMin: 1290, endMin: 1830 });
     expect(p.sleepWarnings).toEqual([]);
   });
 });
@@ -86,7 +86,7 @@ describe('חובות (עבודה ורופאים) פוגעות בשינה אבל 
     const p = prepareWeek(loadScenario('adjacent-shifts'));
     expect(p.sleepWarnings).toHaveLength(1);
     expect(p.sleepWarnings[0]!.mandatoryTaskIds.sort()).toEqual(['s-mon', 's-sun']);
-    expect(p.sleepWarnings[0]!.availableMin).toBe(360);
+    expect(p.sleepWarnings[0]!.availableMin).toBe(300);
   });
 
   it('תור רפואי שחופף למשמרת: לא נבלע, מדווח כהתנגשות קבועה', () => {

@@ -57,9 +57,9 @@ describe('ניגודיות צבעים (WCAG)', () => {
     }
   });
 
-  it('עשר קטגוריות נבדלות זו מזו בבהיר (גוון מבטא)', () => {
+  it('אחת-עשרה קטגוריות נבדלות זו מזו בבהיר (גוון מבטא)', () => {
     const accents = DEFAULT_CATEGORIES.map((c) => categoryTint(c.color, 'light').accent);
-    expect(new Set(accents).size).toBe(10);
+    expect(new Set(accents).size).toBe(11);
   });
 
   it('רקעי שבת, חג, ערב חג וחול המועד שונים זה מזה', () => {

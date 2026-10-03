@@ -1,13 +1,11 @@
 /** לוגיקה טהורה של המסכים (P7): בלי DOM ובלי אחסון, כדי לבדוק אותה לבד. */
 import type {
   Category,
-  Effort,
   Flexibility,
   Id,
   IsoDate,
   Minutes,
   Personality,
-  Priority,
   Schedule,
   ScheduleBlock,
   Settings,
@@ -16,8 +14,8 @@ import type {
   Week,
 } from '../contracts';
 import { GRID_MINUTES } from '../contracts';
-import { validateHardRules } from '../engine/base';
-import { addDays, weekDates } from '../time';
+import { travelOf, validateHardRules } from '../engine/base';
+import { addDays, diffDays, weekDates } from '../time';
 
 export const DAY_MIN = 1440;
 
@@ -76,6 +74,33 @@ export function createWeek(startDate: IsoDate): Week {
   };
 }
 
+/** זריקה כל שבועיים: השבוע הראשון מתחיל ב-11.10.2026 (ראשון), התזכורת ביום שני. */
+export const INJECTION_ANCHOR: IsoDate = '2026-10-11';
+export const INJECTION_PREFIX = 'injection-';
+
+/** תזכורת הזריקה לשבוע, אם זה שבוע זריקה. אחרת undefined. מזהה קבוע לפי השבוע, כדי לא ליצור כפילות. */
+export function injectionReminderFor(week: Pick<Week, 'id' | 'startDate'>): Task | undefined {
+  const d = diffDays(INJECTION_ANCHOR, week.startDate);
+  if (d < 0 || d % 14 !== 0) return undefined;
+  return {
+    id: `${INJECTION_PREFIX}${week.startDate}`,
+    title: 'לקחת זריקה',
+    notes: 'כל שבועיים. אפשר להזיז ליום אחר בשבוע.',
+    categoryId: 'health',
+    durationMin: 15,
+    priority: 'high',
+    weekId: week.id,
+    // יום שני כברירת מחדל; בהזזה ידנית היום הזה אינו חוסם
+    constraints: { fixedDate: addDays(week.startDate, 1) },
+    flexibility: 'flexible',
+    split: { splittable: false },
+    dependsOn: [],
+    effort: 'light',
+    timesPerWeek: 1,
+    status: 'pending',
+  };
+}
+
 export interface ShiftInput {
   date: IsoDate;
   startMin: Minutes;
@@ -108,8 +133,8 @@ export interface TaskForm {
   notes?: string;
   categoryId: Id;
   durationMin: Minutes;
-  priority: Priority;
-  effort: Effort;
+  /** נסיעה לכל כיוון, בדקות. */
+  travelMin: Minutes;
   flexibility: Flexibility;
   timesPerWeek: number;
   dueDate?: IsoDate;
@@ -129,7 +154,8 @@ export function createTask(weekId: Id, form: TaskForm, id: Id = newId('task')): 
     title: form.title.trim(),
     categoryId: form.categoryId,
     durationMin: form.durationMin,
-    priority: form.priority,
+    // עדיפות עליונה רק לרפואה (בריאות); שאר המשימות שוות
+    priority: form.categoryId === 'health' ? 'high' : 'medium',
     weekId,
     constraints,
     flexibility: form.flexibility,
@@ -137,10 +163,11 @@ export function createTask(weekId: Id, form: TaskForm, id: Id = newId('task')): 
       ? { splittable: true, ...(form.minSegmentMin !== undefined ? { minSegmentMin: form.minSegmentMin } : {}) }
       : { splittable: false },
     dependsOn: form.dependsOn,
-    effort: form.effort,
+    effort: 'medium',
     timesPerWeek: Math.max(1, Math.floor(form.timesPerWeek)),
     status: 'pending',
   };
+  if (form.travelMin > 0) task.travelMin = form.travelMin;
   if (form.notes?.trim()) task.notes = form.notes.trim();
   if (form.dueDate) task.dueDate = form.dueDate;
   return task;
@@ -169,7 +196,7 @@ export function isShift(task: Task): boolean {
 /** העתקת משימות לא-קבועות משבוע קודם: מזהים חדשים, סטטוס ממתינה, תאריכים מוזזים בשבוע. */
 export function copyTasksToNextWeek(source: readonly Task[], targetWeekId: Id, dayOffset: number): Task[] {
   const idMap = new Map<Id, Id>();
-  const picked = source.filter((t) => !isShift(t));
+  const picked = source.filter((t) => !isShift(t) && !t.id.startsWith(INJECTION_PREFIX));
   for (const t of picked) idMap.set(t.id, newId('task'));
   return picked.map((t) => {
     const constraints: Task['constraints'] = { ...t.constraints };
@@ -210,6 +237,34 @@ export function segmentsForDate(blocks: readonly ScheduleBlock[], date: IsoDate)
     }
   }
   return out.sort((a, b) => a.startMin - b.startMin || a.endMin - b.endMin);
+}
+
+export interface TravelSegment {
+  taskId: Id;
+  startMin: Minutes;
+  endMin: Minutes;
+}
+
+/**
+ * נסיעה לפני ואחרי כל משימה (לפי travelOf), לתצוגה בלבד: נגזרת מהבלוקים ואינה נשמרת בסידור.
+ * נסיעה שחוצה חצות מופיעה ביום שבו היא נופלת.
+ */
+export function travelSegmentsForDate(blocks: readonly ScheduleBlock[], tasks: readonly Task[], date: IsoDate): TravelSegment[] {
+  const out: TravelSegment[] = [];
+  const byId = new Map(tasks.map((t) => [t.id, t]));
+  for (const b of blocks) {
+    if (b.kind !== 'task' || !b.taskId) continue;
+    const task = byId.get(b.taskId);
+    const t = task ? travelOf(task) : 0;
+    if (t <= 0) continue;
+    const dayOffset = diffDays(b.range.date, date) * DAY_MIN;
+    for (const [a, z] of [[b.range.startMin - t, b.range.startMin], [b.range.endMin, b.range.endMin + t]] as const) {
+      const s = Math.max(a - dayOffset, 0);
+      const e = Math.min(z - dayOffset, DAY_MIN);
+      if (e > s) out.push({ taskId: b.taskId, startMin: s, endMin: e });
+    }
+  }
+  return out.sort((x, y) => x.startMin - y.startMin);
 }
 
 export function blockMinutes(b: ScheduleBlock): Minutes {
@@ -342,6 +397,7 @@ function violationKeys(schedule: Schedule, ctx: EditContext, blocks: readonly Sc
 export function moveBlock(schedule: Schedule, blockId: Id, date: IsoDate, startMin: Minutes, ctx: EditContext): MoveResult {
   const block = schedule.blocks.find((b) => b.id === blockId);
   if (!block) return { ok: false, reason: 'הבלוק לא נמצא' };
+  const task = ctx.tasks.find((t) => t.id === block.taskId);
   if (block.kind === 'sleep') return { ok: false, reason: 'אי אפשר להזיז שינה' };
   if (block.locked) return { ok: false, reason: 'הבלוק נעול. שחרר אותו כדי להזיז' };
   if (!isBlockMovable(block, ctx)) return { ok: false, reason: 'משימה קבועה אינה ניתנת להזזה' };
@@ -353,7 +409,9 @@ export function moveBlock(schedule: Schedule, blockId: Id, date: IsoDate, startM
   const blocks = schedule.blocks.map((b) => (b.id === blockId ? moved : b));
   const before = violationKeys(schedule, ctx, schedule.blocks);
   const after = violationKeys(schedule, ctx, blocks);
-  for (const [key, message] of after) if (!before.has(key)) return { ok: false, reason: message };
+  // יום ברירת המחדל של משימה בלי שעה קבועה (למשל הזריקה) אינו חוסם הזזה ידנית
+  const dayOnly = task?.constraints.fixedStartMin === undefined;
+  for (const [key, message] of after) if (!before.has(key) && !(dayOnly && key.startsWith(`fixed_time:${task?.id}:`))) return { ok: false, reason: message };
   return { ok: true, schedule: { ...schedule, blocks } };
 }
 

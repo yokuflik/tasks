@@ -13,6 +13,7 @@ import {
   createShift,
   createTask,
   createWeek,
+  injectionReminderFor,
   lockedBlocksOf,
   moveBlock,
   newId,
@@ -132,7 +133,14 @@ export function App({ services }: { services: AppServices }) {
       setWeekStart(date) { setWeekStartState(weekStartOf(date)); },
       createWeek: () => run(async () => {
         const start = weekStartRef.current!;
-        if (!currentWeek()) await st.saveWeek(createWeek(start));
+        if (currentWeek()) return;
+        const week = createWeek(start);
+        const reminder = injectionReminderFor(week);
+        if (reminder) {
+          await st.saveTask(reminder);
+          week.taskIds.push(reminder.id);
+        }
+        await st.saveWeek(week);
       }).then(() => undefined),
       copyFromPreviousWeek: () => run(async () => {
         const w = requireWeek();

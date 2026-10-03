@@ -29,6 +29,7 @@ test('משתמש חדש: משמרות, משימות, שלושה סידורים, 
 
   for (const [i, s, e] of [[0, '07:00', '15:00'], [1, '07:00', '15:00'], [2, '22:00', '06:00']] as const) {
     await page.locator('[name="shift-date"]').selectOption(days[i]!);
+    await page.getByRole('button', { name: 'ידנית' }).click();
     await page.locator('[name="shift-start"]').fill(s);
     await page.locator('[name="shift-end"]').fill(e);
     await page.getByRole('button', { name: 'הוסף משמרת' }).click();

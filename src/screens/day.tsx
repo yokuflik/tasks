@@ -2,8 +2,8 @@ import { useRef, useState } from 'preact/hooks';
 import type { JSX } from 'preact';
 import type { IsoDate, ScheduleBlock } from '../contracts';
 import { hebrewDate, instantToWall } from '../time';
-import { Button, SleepBand, TaskCard } from '../ui';
-import { isDoneSwipe, segmentsForDate, shortDate } from './model';
+import { Button, SleepBand, TaskCard, TravelBand } from '../ui';
+import { isDoneSwipe, segmentsForDate, shortDate, travelSegmentsForDate } from './model';
 import { DayMarks, ExceptionsList, NeedSchedule, WeekHeader, weekdayName } from './shared';
 import type { ScreenProps } from './types';
 
@@ -73,9 +73,15 @@ export function DayScreen(p: ScreenProps): JSX.Element {
   };
 
   const items: (JSX.Element | null)[] = [];
-  segs.forEach((s, i) => {
-    if (i === nowAt) items.push(nowLine);
-    items.push(renderBlock(s.block, s.startMin, s.endMin));
+  const travel = travelSegmentsForDate(p.selected.blocks, p.tasks, date);
+  const timeline = [
+    ...segs.map((s) => ({ startMin: s.startMin, seg: s as (typeof segs)[number] | undefined, travel: undefined as (typeof travel)[number] | undefined })),
+    ...travel.map((t) => ({ startMin: t.startMin, seg: undefined, travel: t })),
+  ].sort((a, b) => a.startMin - b.startMin);
+  timeline.forEach((e, i) => {
+    if (e.seg && segs.indexOf(e.seg) === nowAt) items.push(nowLine);
+    if (e.seg) items.push(renderBlock(e.seg.block, e.seg.startMin, e.seg.endMin));
+    else if (e.travel) items.push(<TravelBand key={`travel-${e.travel.taskId}-${e.travel.startMin}-${i}`} startMin={e.travel.startMin} endMin={e.travel.endMin} />);
   });
   if (nowMin !== undefined && nowAt === -1 && segs.length > 0) items.push(nowLine);
 

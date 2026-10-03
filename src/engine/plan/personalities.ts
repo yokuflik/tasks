@@ -14,6 +14,7 @@ export const SOFT_RULES = [
   'buffer',
   'heavyStreak',
   'earliness',
+  'offHours',
 ] as const;
 export type SoftRule = (typeof SOFT_RULES)[number];
 export type Weights = Record<SoftRule, number>;
@@ -33,6 +34,7 @@ export const PERSONALITY_WEIGHTS: Record<Personality, Weights> = {
     buffer: 2,
     heavyStreak: 2,
     earliness: 0.05,
+    offHours: 30,
   },
   early: {
     loadBalance: 0.3,
@@ -47,6 +49,7 @@ export const PERSONALITY_WEIGHTS: Record<Personality, Weights> = {
     buffer: 0.3,
     heavyStreak: 1,
     earliness: 5,
+    offHours: 30,
   },
   themed: {
     loadBalance: 0.4,
@@ -61,6 +64,7 @@ export const PERSONALITY_WEIGHTS: Record<Personality, Weights> = {
     buffer: 0.8,
     heavyStreak: 1,
     earliness: 0.1,
+    offHours: 30,
   },
 };
 

@@ -8,6 +8,9 @@ const DAY = 1440;
 const HEAVY_LATE_FROM = 16 * 60;
 const LIGHT_EARLY_UNTIL = 12 * 60;
 const BUFFER_TARGET_MIN = 60;
+/** משימות שאינן עבודה מועדפות בין 08:00 ל-23:00; מחוץ לזה רק אם אין ברירה. */
+const DAY_FROM_MIN = 8 * 60;
+const DAY_TO_MIN = 23 * 60;
 const HEAVY_RUN_MAX_MIN = 120;
 const DEFAULT_MAX_CONSECUTIVE_MIN = 240;
 const PRIORITY_WEIGHT = { high: 3, medium: 1.5, low: 0.5 } as const;
@@ -113,6 +116,12 @@ export function evaluate(ctx: Ctx, pieces: readonly Piece[]): Evaluation {
       if (info && !info.fixed) {
         const themed = ctx.themeDays.get(catId);
         if (themed && !themed.has(d)) raw.themeMismatch += dur / 60;
+      }
+      if (info?.task.categoryId !== 'work') {
+        const a = p.start - d * DAY;
+        const b = a + dur;
+        const inside = Math.max(0, Math.min(b, DAY_TO_MIN) - Math.max(a, DAY_FROM_MIN));
+        raw.offHours += (dur - inside) / 60;
       }
       if (p.movable && info) {
         const urgency = info.task.dueDate !== undefined ? 2 : 1;

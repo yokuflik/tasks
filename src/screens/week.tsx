@@ -3,7 +3,7 @@ import type { JSX } from 'preact';
 import type { Id, IsoDate, Minutes, ScheduleBlock } from '../contracts';
 import { hebrewDate, specialDaysOn, weekDates } from '../time';
 import {
-  Button, DayLoadBar, Icon, ShabbatColumn, SleepBand, TimeBlock, formatTime,
+  Button, DayLoadBar, Icon, ShabbatColumn, SleepBand, TimeBlock, TravelBand, formatTime,
 } from '../ui';
 import {
   DAY_MIN,
@@ -17,6 +17,7 @@ import {
   segmentsForDate,
   shortDate,
   timeInputValue,
+  travelSegmentsForDate,
   type ColumnRect,
 } from './model';
 import { ExceptionsList, NeedSchedule, WeekHeader, weekdayName } from './shared';
@@ -212,7 +213,7 @@ export function WeekScreen(p: ScreenProps): JSX.Element {
     return (
       <div key={`${b.id}-${seg.continuation ? 'c' : 's'}`} class={`scr-block${task.status === 'done' ? ' is-done' : ''}${dragging ? ' is-dragging' : ''}`} style={style}
         data-block={b.id} data-kind="task" {...handlers}>
-        <TimeBlock title={task.title} category={cat} startMin={b.range.startMin} endMin={b.range.endMin} locked={b.locked} />
+        <TimeBlock title={task.title} category={cat} startMin={b.range.startMin} endMin={b.range.endMin} locked={b.locked} compact={b.range.endMin - b.range.startMin <= 60} />
         {warn && <span class="scr-warn" title="יום מיוחד"><Icon name="warning" size={12} /></span>}
       </div>
     );
@@ -223,6 +224,12 @@ export function WeekScreen(p: ScreenProps): JSX.Element {
     const ghostBlock = drag && drag.date === date ? schedule.blocks.find((b) => b.id === drag.blockId) : undefined;
     const body = (
       <div class="scr-col__body" data-col-body={date} style={{ blockSize: `${DAY_MIN * PX_PER_MIN}px` }}>
+        {travelSegmentsForDate(schedule.blocks, p.tasks, date).map((t, i) => (
+          <div key={`travel-${t.taskId}-${t.startMin}-${i}`} class="scr-block" data-kind="travel"
+            style={{ position: 'absolute', insetBlockStart: `${t.startMin * PX_PER_MIN}px`, blockSize: `${(t.endMin - t.startMin) * PX_PER_MIN}px`, insetInline: '2px', pointerEvents: 'none' }}>
+            <TravelBand startMin={t.startMin} endMin={t.endMin} compact />
+          </div>
+        ))}
         {segs.map(renderSegment)}
         {ghostBlock && drag && (
           <div class="scr-block is-ghost" data-ghost style={{ position: 'absolute', insetBlockStart: `${drag.startMin * PX_PER_MIN}px`, blockSize: `${blockMinutes(ghostBlock) * PX_PER_MIN}px`, insetInline: '2px' }} />

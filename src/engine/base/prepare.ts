@@ -1,3 +1,4 @@
+import { GRID_MINUTES } from '../../contracts';
 import type {
   BlockedTime,
   Category,
@@ -10,7 +11,7 @@ import type {
 } from '../../contracts';
 import { dayDiff } from './dates';
 import { analyzeTasks, isFixedTask, suggestionFor } from './feasibility';
-import { absToRange, buildGrid, occupy, OCCUPANT, rangeToAbs } from './grid';
+import { absToRange, buildGrid, isRangeFree, occupy, OCCUPANT, rangeToAbs } from './grid';
 import type { Grid } from './grid';
 import { nightWindow, planSleep } from './sleep';
 
@@ -45,6 +46,16 @@ export interface PreparedWeek {
   /** מקביל ל-sleepShortfalls, עם הגורמים והודעה בעברית להצגה למשתמש. */
   sleepWarnings: SleepWarning[];
   exceptions: ExceptionsReport;
+}
+
+/** נסיעה לפני ואחרי משמרת עבודה. */
+export const TRAVEL_MIN = 20;
+/** מרווח מינימלי בין הנסיעה למשימה הסמוכה, כדי שלא תיראה צמודה לקצה שלה. */
+export const TRAVEL_GAP_MIN = 10;
+
+/** נסיעה לכל כיוון (דקות): עבודה תמיד 20, אחרת לפי המשימה. */
+export function travelOf(task: Pick<Task, 'categoryId' | 'travelMin'>): number {
+  return task.categoryId === 'work' ? TRAVEL_MIN : Math.max(0, task.travelMin ?? 0);
 }
 
 function fixedConflict(taskId: string, why: string): UnplacedTask {
@@ -115,7 +126,22 @@ export function prepareWeek(input: PrepareInput): PreparedWeek {
     });
   }
 
-  const sleep = planSleep(grid, week.activeDates, settings, lockedBlocks);
+  // נסיעה של 20 דקות לפני ואחרי כל משמרת עבודה. תופסת רק זמן פנוי.
+  const morningStarts: number[] = [];
+  for (const f of placedFixed) {
+    const task = live.find((t) => t.id === f.id);
+    if (!task || task.categoryId !== 'work') continue;
+    const reserve = TRAVEL_MIN + TRAVEL_GAP_MIN;
+    const before = isRangeFree(grid, f.start - reserve, f.start, { ignoreOpen: true }) ? reserve : TRAVEL_MIN;
+    const after = isRangeFree(grid, f.end, f.end + reserve, { ignoreOpen: true }) ? reserve : TRAVEL_MIN;
+    for (const [a, b] of [[f.start - before, f.start], [f.end, f.end + after]] as const) {
+      if (isRangeFree(grid, a, b, { ignoreOpen: true })) occupy(grid, a, b, OCCUPANT.fixed);
+    }
+    // הרשת בקפיצות 15 דקות, אז השינה נגמרת על גבול המשבצת, לפני הנסיעה והמרווח
+    morningStarts.push(Math.floor((f.start - before) / GRID_MINUTES) * GRID_MINUTES);
+  }
+
+  const sleep = planSleep(grid, week.activeDates, settings, lockedBlocks, morningStarts);
 
   const flexible = live.filter((t) => !isFixedTask(t, categories));
   const analysis = analyzeTasks(grid, live, categories, unplaced);

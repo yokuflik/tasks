@@ -78,6 +78,8 @@ export interface TimeBlockProps {
   startMin: Minutes;
   endMin: Minutes;
   locked?: boolean;
+  /** בלוק קצר (עד שעה): בלי טווח שעות, רק מה יש בו. */
+  compact?: boolean;
   /** מיקום וגובה בתוך עמודת היום, בידי המסך. */
   style?: StyleMap;
 }
@@ -90,7 +92,7 @@ export function TimeBlock(p: TimeBlockProps): JSX.Element {
   return (
     <div class={cls} style={{ ...catStyle(p.category), ...(p.style ?? {}) }} data-category={p.category.id}>
       <span class="ui-time-block__title" dir="auto">{p.title}</span>
-      <span class="ui-time-block__time">{formatRange(p.startMin, p.endMin)}</span>
+      {!p.compact && <bdi dir="ltr" class="ui-time-block__time">{formatRange(p.startMin, p.endMin)}</bdi>}
       <Marker fixed={fixed} locked={locked} />
     </div>
   );
@@ -109,8 +111,32 @@ export function SleepBand(p: SleepBandProps): JSX.Element {
     <div class="ui-sleep-band" role="img" aria-label={`שינה ${formatRange(p.startMin, p.endMin)}`} {...(p.style ? { style: p.style } : {})}>
       <Icon name="moon" size={16} />
       <span>שינה</span>
-      <span class="ui-sleep-band__time">{formatRange(p.startMin, p.endMin)} · {formatDuration(p.endMin - p.startMin)}</span>
+      <span class="ui-sleep-band__time">
+        <bdi dir="ltr" class="ui-sleep-band__range">{formatRange(p.startMin, p.endMin)}</bdi>
+        <bdi class="ui-sleep-band__dur">{formatDuration(p.endMin - p.startMin)}</bdi>
+      </span>
       {p.locked && <Icon name="lock" size={14} title="נעול" />}
+    </div>
+  );
+}
+
+export interface TravelBandProps {
+  startMin: Minutes;
+  endMin: Minutes;
+  /** רצועה צרה (רשת השבוע): בלי טקסט, רק סימון. */
+  compact?: boolean;
+  style?: StyleMap;
+}
+
+/** רצועת נסיעה: ריפוד לפני ואחרי משימה. */
+export function TravelBand(p: TravelBandProps): JSX.Element {
+  const label = `נסיעה ${formatRange(p.startMin, p.endMin)}`;
+  if (p.compact) return <div class="ui-travel-band ui-travel-band--compact" role="img" aria-label={label} title={label} {...(p.style ? { style: p.style } : {})}><span>נסיעה</span></div>;
+  return (
+    <div class="ui-travel-band" role="img" aria-label={label} {...(p.style ? { style: p.style } : {})}>
+      <Icon name="car" size={14} />
+      <span>נסיעה</span>
+      <span class="ui-travel-band__time">{formatDuration(p.endMin - p.startMin)}</span>
     </div>
   );
 }

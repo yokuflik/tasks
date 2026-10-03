@@ -149,6 +149,31 @@ describe('חוקים קשיחים בכל וריאציה', () => {
     }
   });
 
+  it('משימות שאינן עבודה לא נקבעות אחרי 23:00 או לפני 08:00 כשיש ברירה', () => {
+    for (const [name, sc] of Object.entries(scenarios)) {
+      const input = fromScenario(sc);
+      for (const s of generateSchedules(input).schedules) {
+        if (s.exceptions.unplaced.length > 0) continue;
+        for (const b of s.blocks) {
+          if (b.kind !== 'task') continue;
+          const t = input.tasks.find((x) => x.id === b.taskId);
+          if (t?.categoryId === 'work' || t?.constraints.allowedWindow || t?.constraints.fixedStartMin !== undefined) continue;
+          expect(b.range.startMin, `${name} ${t?.id}`).toBeGreaterThanOrEqual(480);
+          expect(b.range.endMin, `${name} ${t?.id}`).toBeLessThanOrEqual(1380);
+        }
+      }
+    }
+  });
+
+  it('ריפוד נסיעה: בין משימות עם נסיעה נשאר מרווח לפחות כפול הנסיעה, ובלי הפרות', () => {
+    const input = inputOf([1, 2, 3, 4, 5].map((i) => task(`t${i}`, { travelMin: 20, durationMin: 120 })));
+    for (const s of generateSchedules(input).schedules) {
+      expect(violations(input, s)).toEqual([]);
+      const list = s.blocks.filter((b) => b.kind === 'task').map((b) => rangeToAbs(buildPlan(input, 'balanced').prep.grid, b.range)).sort((a, b) => a.start - b.start);
+      for (let i = 1; i < list.length; i++) expect(list[i]!.start - list[i - 1]!.end).toBeGreaterThanOrEqual(40);
+    }
+  });
+
   it('שבוע ריק: רק שינה', () => {
     for (const s of generateSchedules(inputOf([])).schedules) {
       expect(s.blocks.every((b) => b.kind === 'sleep')).toBe(true);

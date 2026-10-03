@@ -1,4 +1,3 @@
-# פריסה ל-GitHub Pages לא הוגדרה: ממתינה לחשבון GitHub מהמשתמש.
 name: ci
 on: [push, pull_request]
 jobs:

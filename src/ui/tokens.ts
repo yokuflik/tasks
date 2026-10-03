@@ -26,48 +26,48 @@ export interface TintTokens {
 
 export const SURFACES: Record<ThemeMode, SurfaceTokens> = {
   light: {
-    bg: '#fdf3f6',
+    bg: '#ffeef4',
     surface: '#ffffff',
-    surfaceRaised: '#fffafb',
+    surfaceRaised: '#fff5f8',
     text: '#3b2630',
     textMuted: '#6f5560',
-    border: '#f0d3dc',
-    primary: '#b0386a',
+    border: '#f6c6d8',
+    primary: '#c2185b',
     onPrimary: '#ffffff',
-    focus: '#b0386a',
+    focus: '#c2185b',
   },
   dark: {
-    bg: '#1c1217',
-    surface: '#2a1c23',
-    surfaceRaised: '#35242d',
+    bg: '#220d16',
+    surface: '#341522',
+    surfaceRaised: '#431b2d',
     text: '#fbeef2',
     textMuted: '#d1b3be',
-    border: '#4d3641',
-    primary: '#f29cbc',
+    border: '#6a2b45',
+    primary: '#ff9ec4',
     onPrimary: '#3a0f21',
-    focus: '#f29cbc',
+    focus: '#ff9ec4',
   },
 };
 
 /** שינה: רצועה כהה ושקטה בשני המצבים. */
 export const SLEEP: Record<ThemeMode, TintTokens> = {
-  light: { bg: '#2b3452', text: '#e6eaf7', accent: '#a9b6e8' },
-  dark: { bg: '#141a2e', text: '#d5dcf5', accent: '#8d9cd6' },
+  light: { bg: '#4a2340', text: '#fbe6f1', accent: '#f0a6cb' },
+  dark: { bg: '#2a1124', text: '#f7d9e8', accent: '#d98bb4' },
 };
 
 /** שבת וחגים: רקעים שונים זה מזה, בלי קשר לצבעי הקטגוריות. */
 export const SPECIAL: Record<ThemeMode, Record<SpecialDayKind, TintTokens>> = {
   light: {
-    shabbat: { bg: '#ece7f7', text: '#3f2d78', accent: '#6b4fc0' },
-    holiday: { bg: '#fde9c8', text: '#6b3d00', accent: '#c06a00' },
-    holiday_eve: { bg: '#fff4d6', text: '#664d00', accent: '#b38600' },
-    chol_hamoed: { bg: '#dff3e8', text: '#14573a', accent: '#2a9163' },
+    shabbat: { bg: '#f6e3f3', text: '#6a1f66', accent: '#a23a9c' },
+    holiday: { bg: '#ffe0e0', text: '#7a1f2e', accent: '#c93a50' },
+    holiday_eve: { bg: '#ffeadb', text: '#7a3a1c', accent: '#c4622e' },
+    chol_hamoed: { bg: '#fbdcec', text: '#7a1f55', accent: '#c2307f' },
   },
   dark: {
-    shabbat: { bg: '#2a2144', text: '#d9cdf8', accent: '#9d86e6' },
-    holiday: { bg: '#4a3210', text: '#ffdca8', accent: '#e8a040' },
-    holiday_eve: { bg: '#40380f', text: '#f7e6a0', accent: '#d9b73a' },
-    chol_hamoed: { bg: '#163a2a', text: '#bfead3', accent: '#4cc08c' },
+    shabbat: { bg: '#3d1a3a', text: '#f5d3f1', accent: '#d27acb' },
+    holiday: { bg: '#4a1a24', text: '#ffd2d8', accent: '#f0707f' },
+    holiday_eve: { bg: '#4a2a1c', text: '#ffdcc8', accent: '#eb9068' },
+    chol_hamoed: { bg: '#471a38', text: '#ffd0e8', accent: '#ee6fb0' },
   },
 };
 

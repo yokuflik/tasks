@@ -84,6 +84,7 @@ function checkTask(t: unknown, i: number, p: Problems): void {
   p.check(optional(t, 'notes', isStr), `${w}.notes`, 'לא תקין');
   p.check(isStr(t['categoryId']), `${w}.categoryId`, 'לא תקין');
   p.check(isInt(t['durationMin']) && (t['durationMin'] as number) > 0, `${w}.durationMin`, 'לא תקין');
+  p.check(optional(t, 'travelMin', isInt), `${w}.travelMin`, 'לא תקין');
   p.check(oneOf(t['priority'], ['low', 'medium', 'high']), `${w}.priority`, 'לא תקין');
   p.check(optional(t, 'dueDate', isIsoDate), `${w}.dueDate`, 'לא תקין');
   p.check(optional(t, 'weekId', isStr), `${w}.weekId`, 'לא תקין');

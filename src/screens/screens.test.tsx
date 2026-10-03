@@ -710,7 +710,7 @@ describe('הגדרות וגיבוי', () => {
     await click(buttonByText('שמור הגדרות'));
     await until(async () => (await h.storage.getSettings()).minBreakMin === 30, 'saved');
 
-    await setValue($('[name="target-sleep"]'), '300');
+    await setValue($('[name="target-sleep"]'), '5');
     await click(buttonByText('שמור הגדרות'));
     expect(host!.textContent).toContain('ערכים לא תקינים');
     expect((await h.storage.getSettings()).targetSleepMin).toBe(540);
@@ -726,7 +726,7 @@ describe('הגדרות וגיבוי', () => {
     const color = $('[name="cat-color-study"]') as HTMLInputElement;
     await act(async () => { color.value = '#112233'; color.dispatchEvent(new Event('change', { bubbles: true })); });
     await until(async () => (await h.storage.listCategories()).find((c) => c.id === 'study')?.color === '#112233', 'recolored');
-    expect((await h.storage.listCategories())).toHaveLength(10);
+    expect((await h.storage.listCategories())).toHaveLength(11);
   });
 
   it('תזכורת גיבוי, אחסון לא מתמשך, וייצוא מעדכן את התאריך', async () => {

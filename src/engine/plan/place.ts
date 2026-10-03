@@ -41,7 +41,7 @@ export function earliestStart(pieces: readonly Piece[], task: Task): number {
 export function feasibleStartCount(ctx: Ctx, task: Task): number {
   const mask = ctx.masks.get(task.id);
   if (!mask) return 0;
-  return candidateStarts(ctx.grid, mask, Math.max(GRID_MINUTES, task.durationMin), 0).length;
+  return candidateStarts(ctx.grid, mask, Math.max(GRID_MINUTES, task.durationMin), 0, Infinity, ctx.pads.get(task.id) ?? 0).length;
 }
 
 /**
@@ -142,13 +142,13 @@ function commit(state: PlanState, task: Task, occurrence: number, start: number,
     movable: true,
   };
   state.pieces.push(piece);
-  occupyTask(state.ctx.grid, piece.start, piece.end);
+  occupyTask(state.ctx.grid, piece.start, piece.end, state.ctx.pads.get(task.id) ?? 0);
   return piece;
 }
 
 function rollback(state: PlanState, added: Piece[]): void {
   for (const p of added) {
-    release(state.ctx.grid, p.start, p.end);
+    release(state.ctx.grid, p.start, p.end, state.ctx.pads.get(p.taskId) ?? 0);
     state.pieces.splice(state.pieces.indexOf(p), 1);
   }
 }
@@ -172,7 +172,8 @@ export function placeInstance(state: PlanState, inst: Instance, rng: Rng): boole
     return { ...base, id: `p-${task.id}-${segment}`, segment };
   };
 
-  const whole = candidateStarts(state.ctx.grid, mask, durationMin, earliest);
+  const pad = state.ctx.pads.get(task.id) ?? 0;
+  const whole = candidateStarts(state.ctx.grid, mask, durationMin, earliest, Infinity, pad);
   if (whole.length > 0) {
     const start = pickBest(state, idOf(), durationMin, whole, rng);
     if (start !== null) {
@@ -190,7 +191,7 @@ export function placeInstance(state: PlanState, inst: Instance, rng: Rng): boole
     let ok = true;
     for (const size of sizes) {
       const len = size * GRID_MINUTES;
-      const starts = candidateStarts(state.ctx.grid, mask, len, earliest);
+      const starts = candidateStarts(state.ctx.grid, mask, len, earliest, Infinity, pad);
       const start = starts.length > 0 ? pickBest(state, idOf(), len, starts, rng) : null;
       if (start === null) {
         ok = false;

@@ -3,9 +3,9 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[3] / "public"
-BRAND = (59, 91, 219)
-LIGHT_BG = (247, 248, 252)
-DARK_BG = (18, 20, 28)
+BRAND = (194, 24, 91)
+LIGHT_BG = (255, 238, 244)
+DARK_BG = (34, 13, 22)
 
 # רוחב, גובה (פיקסלים), בפורטרט
 SPLASH_SIZES = [
@@ -40,7 +40,7 @@ def main() -> None:
     glyph(512, 0.62, BRAND).save(ROOT / "icons" / "icon-512.png")
     glyph(512, 0.44, BRAND).save(ROOT / "icons" / "icon-maskable-512.png")  # בתוך אזור בטוח של 80%
     for w, h in SPLASH_SIZES:
-        for name, bg, fg in (("light", LIGHT_BG, BRAND), ("dark", DARK_BG, (140, 160, 255))):
+        for name, bg, fg in (("light", LIGHT_BG, BRAND), ("dark", DARK_BG, (255, 158, 196))):
             canvas = Image.new("RGB", (w, h), bg)
             g = int(min(w, h) * 0.3)
             canvas.paste(glyph(g, 0.8, bg, fg), ((w - g) // 2, (h - g) // 2))

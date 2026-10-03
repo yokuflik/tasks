@@ -1,6 +1,6 @@
 import { useState } from 'preact/hooks';
 import type { JSX } from 'preact';
-import type { Effort, Flexibility, Priority } from '../contracts';
+import type { Flexibility } from '../contracts';
 import { weekDates } from '../time';
 import { Button, Card, Icon, formatDuration, formatRange } from '../ui';
 import {
@@ -13,9 +13,18 @@ import {
 import { Empty, WeekHeader, weekdayName } from './shared';
 import type { ScreenProps } from './types';
 
-const PRIORITIES: [Priority, string][] = [['low', 'נמוכה'], ['medium', 'בינונית'], ['high', 'גבוהה']];
-const EFFORTS: [Effort, string][] = [['heavy', 'כבד'], ['medium', 'בינוני'], ['light', 'קל']];
+const TRAVELS = [0, 10, 15, 20, 30, 45, 60];
 const FLEX: [Flexibility, string][] = [['flexible', 'גמישה'], ['semi', 'חצי גמישה'], ['fixed', 'קבועה']];
+
+/** משמרות קבועות מוכנות: בחירה ממלאת שעות, בלי להזין כל פעם מחדש. */
+const SHIFT_PRESETS: { id: string; label: string; start: string; end: string }[] = [
+  { id: 'm15', label: 'בוקר 06:45–15:00', start: '06:45', end: '15:00' },
+  { id: 'm17', label: 'בוקר 06:45–17:00', start: '06:45', end: '17:00' },
+  { id: 'm19', label: 'בוקר 06:45–19:00', start: '06:45', end: '19:00' },
+  { id: 'noon', label: 'צהריים 14:45–23:00', start: '14:45', end: '23:00' },
+  { id: 'n18', label: 'לילה 18:45–07:00', start: '18:45', end: '07:00' },
+  { id: 'n22', label: 'לילה 22:45–07:00', start: '22:45', end: '07:00' },
+];
 
 function ShiftsSection({ p }: { p: ScreenProps }): JSX.Element {
   const week = p.week!;
@@ -23,7 +32,13 @@ function ShiftsSection({ p }: { p: ScreenProps }): JSX.Element {
   const [date, setDate] = useState(week.activeDates[0] ?? dates[0]!);
   const [start, setStart] = useState('07:00');
   const [end, setEnd] = useState('15:00');
+  const [preset, setPreset] = useState<string>('m15');
   const [error, setError] = useState<string | undefined>();
+  const choose = (id: string) => {
+    setPreset(id);
+    const found = SHIFT_PRESETS.find((x) => x.id === id);
+    if (found) { setStart(found.start); setEnd(found.end); }
+  };
   const shifts = p.tasks.filter(isShift).sort((a, b) =>
     `${a.constraints.fixedDate}${String(a.constraints.fixedStartMin).padStart(4, '0')}`.localeCompare(
       `${b.constraints.fixedDate}${String(b.constraints.fixedStartMin).padStart(4, '0')}`));
@@ -35,6 +50,8 @@ function ShiftsSection({ p }: { p: ScreenProps }): JSX.Element {
     if (s === e) return setError('שעת הסיום זהה להתחלה');
     setError(undefined);
     void p.actions.addShift({ date, startMin: s, endMin: e });
+    const next = dates[dates.indexOf(date) + 1];
+    if (next) setDate(next);
   };
 
   return (
@@ -53,6 +70,12 @@ function ShiftsSection({ p }: { p: ScreenProps }): JSX.Element {
         ))}
         {shifts.length === 0 && <li class="scr-muted">עוד לא הוזנו משמרות</li>}
       </ul>
+      <div class="scr-chips" role="group" aria-label="משמרת קבועה">
+        {SHIFT_PRESETS.map((x) => (
+          <button key={x.id} type="button" class={preset === x.id ? 'scr-chip is-on' : 'scr-chip'} aria-pressed={preset === x.id} onClick={() => choose(x.id)}>{x.label}</button>
+        ))}
+        <button type="button" class={preset === 'manual' ? 'scr-chip is-on' : 'scr-chip'} aria-pressed={preset === 'manual'} onClick={() => setPreset('manual')}>ידנית</button>
+      </div>
       <div class="scr-form-row">
         <label>יום
           <select name="shift-date" value={date} onChange={(e) => setDate((e.currentTarget as HTMLSelectElement).value)}>
@@ -60,10 +83,10 @@ function ShiftsSection({ p }: { p: ScreenProps }): JSX.Element {
           </select>
         </label>
         <label>התחלה
-          <input name="shift-start" type="time" value={start} onInput={(e) => setStart((e.currentTarget as HTMLInputElement).value)} />
+          <input name="shift-start" type="time" value={start} disabled={preset !== 'manual'} onInput={(e) => setStart((e.currentTarget as HTMLInputElement).value)} />
         </label>
         <label>סיום
-          <input name="shift-end" type="time" value={end} onInput={(e) => setEnd((e.currentTarget as HTMLInputElement).value)} />
+          <input name="shift-end" type="time" value={end} disabled={preset !== 'manual'} onInput={(e) => setEnd((e.currentTarget as HTMLInputElement).value)} />
         </label>
       </div>
       {error && <p class="scr-error" role="alert">{error}</p>}
@@ -73,7 +96,7 @@ function ShiftsSection({ p }: { p: ScreenProps }): JSX.Element {
 }
 
 const BLANK: TaskForm = {
-  title: '', categoryId: 'study', durationMin: 60, priority: 'medium', effort: 'medium',
+  title: '', categoryId: 'study', durationMin: 60, travelMin: 0,
   flexibility: 'flexible', timesPerWeek: 1, splittable: false, dependsOn: [],
 };
 
@@ -138,14 +161,9 @@ function TasksSection({ p }: { p: ScreenProps }): JSX.Element {
         </div>
         {errors.duration && <p class="scr-error" role="alert">{errors.duration}</p>}
         <div class="scr-form-row">
-          <label>עדיפות
-            <select name="priority" value={form.priority} onChange={(e) => set({ priority: (e.currentTarget as HTMLSelectElement).value as Priority })}>
-              {PRIORITIES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-            </select>
-          </label>
-          <label>מאמץ
-            <select name="effort" value={form.effort} onChange={(e) => set({ effort: (e.currentTarget as HTMLSelectElement).value as Effort })}>
-              {EFFORTS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+          <label>נסיעה (דקות, לכל כיוון)
+            <select name="travel" value={form.travelMin} onChange={(e) => set({ travelMin: Number((e.currentTarget as HTMLSelectElement).value) })}>
+              {TRAVELS.map((v) => <option key={v} value={v}>{v === 0 ? 'ללא' : v}</option>)}
             </select>
           </label>
           <label>פעמים בשבוע
@@ -207,15 +225,24 @@ function BlockedSection({ p }: { p: ScreenProps }): JSX.Element {
   const [title, setTitle] = useState('');
   const [date, setDate] = useState(dates[0]!);
   const [start, setStart] = useState('12:00');
+  const [endDate, setEndDate] = useState(dates[0]!);
   const [end, setEnd] = useState('13:00');
   const [note, setNote] = useState<string | undefined>();
 
   const add = () => {
     const s = parseTimeInput(start);
     const e = parseTimeInput(end);
-    if (s === undefined || e === undefined || s === e) return setNote('שעות לא תקינות');
+    if (s === undefined || e === undefined) return setNote('שעות לא תקינות');
+    if (endDate < date || (endDate === date && e <= s)) return setNote('הסיום חייב להיות אחרי ההתחלה');
     setNote(undefined);
-    void p.actions.addBlocked({ title, date, startMin: s, endMin: e });
+    // טווח שחוצה ימים נשמר כפלח לכל יום
+    for (const d of dates.filter((x) => x >= date && x <= endDate)) {
+      void p.actions.addBlocked({
+        title, date: d,
+        startMin: d === date ? s : 0,
+        endMin: d === endDate ? e : 1440,
+      });
+    }
     setTitle('');
   };
   const onFile = async (ev: Event) => {
@@ -245,17 +272,28 @@ function BlockedSection({ p }: { p: ScreenProps }): JSX.Element {
         <label>שם
           <input name="blocked-title" value={title} onInput={(e) => setTitle((e.currentTarget as HTMLInputElement).value)} />
         </label>
-        <label>יום
-          <select name="blocked-date" value={date} onChange={(e) => setDate((e.currentTarget as HTMLSelectElement).value)}>
+      </div>
+      <div class="scr-form-row">
+        <label>מיום
+          <select name="blocked-date" value={date} onChange={(e) => {
+            const v = (e.currentTarget as HTMLSelectElement).value;
+            setDate(v);
+            if (endDate < v) setEndDate(v);
+          }}>
             {dates.map((d) => <option key={d} value={d}>{weekdayName(d)} {shortDate(d)}</option>)}
           </select>
         </label>
-      </div>
-      <div class="scr-form-row">
-        <label>התחלה
+        <label>משעה
           <input name="blocked-start" type="time" value={start} onInput={(e) => setStart((e.currentTarget as HTMLInputElement).value)} />
         </label>
-        <label>סיום
+      </div>
+      <div class="scr-form-row">
+        <label>עד יום
+          <select name="blocked-end-date" value={endDate} onChange={(e) => setEndDate((e.currentTarget as HTMLSelectElement).value)}>
+            {dates.filter((d) => d >= date).map((d) => <option key={d} value={d}>{weekdayName(d)} {shortDate(d)}</option>)}
+          </select>
+        </label>
+        <label>עד שעה
           <input name="blocked-end" type="time" value={end} onInput={(e) => setEnd((e.currentTarget as HTMLInputElement).value)} />
         </label>
       </div>

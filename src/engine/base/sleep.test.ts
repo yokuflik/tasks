@@ -44,6 +44,16 @@ describe('שינה', () => {
     for (const sl of p.sleepBlocks) expect(abs(p, sl).end - abs(p, sl).start).toBeGreaterThanOrEqual(480);
   });
 
+  it('משמרת בוקר ביום הראשון של השבוע: יש שינה מהלילה שלפניו, שנגמרת לפני הנסיעה', () => {
+    const p = prepareWeek(loadScenario('morning-shifts'));
+    const sunday = p.grid.originDate;
+    const shift0 = abs(p, p.fixedBlocks.find((b) => b.range.date === sunday)!);
+    const pre = p.sleepBlocks.find((b) => abs(p, b).end <= 1440 && abs(p, b).end > 0 && abs(p, b).start < 0 + shift0.start);
+    expect(pre).toBeDefined();
+    expect(abs(p, pre!).end).toBeLessThanOrEqual(shift0.start - 20);
+    expect(abs(p, pre!).end - abs(p, pre!).start).toBeGreaterThanOrEqual(480);
+  });
+
   it('משמרות לילה: השינה זזה לאחרי המשמרת, לא לפניה', () => {
     const p = prepareWeek(loadScenario('night-shifts'));
     expect(p.exceptions.sleepShortfalls).toEqual([]);
@@ -71,20 +81,20 @@ describe('שינה', () => {
 
   it('שתי משמרות סמוכות שמשאירות 6 שעות: מדווח, לא שובר בשקט', () => {
     const p = prepareWeek(loadScenario('adjacent-shifts'));
-    expect(p.exceptions.sleepShortfalls).toEqual([{ date: DAYS[0], availableMin: 360, requiredMin: 480 }]);
+    expect(p.exceptions.sleepShortfalls).toEqual([{ date: DAYS[0], availableMin: 300, requiredMin: 480 }]);
     // הלילות האחרים תקינים, והמשמרות במקומן
     expect(p.fixedBlocks).toHaveLength(2);
     const shortNight = p.sleepBlocks.find((b) => b.id === `sleep-${DAYS[0]}`)!;
-    expect(shortNight.range.endMin - shortNight.range.startMin).toBe(360);
+    expect(shortNight.range.endMin - shortNight.range.startMin).toBe(300);
   });
 
   it('חלון שינה בדיוק 8 שעות מספיק; 7:45 לא', () => {
-    // משמרת א מסתיימת 23:00, משמרת ב מתחילה 07:00 למחרת: 8 שעות בדיוק
-    const ok = prepareWeek(input([shift('a', 0, 900, 480), shift('b', 1, 420, 480)], week({ activeDates: [DAYS[0]!, DAYS[1]!] })));
+    // משמרת א מסתיימת 23:00, משמרת ב מתחילה 08:00 למחרת; עם נסיעה של 30 (בגריד) משני הצדדים: 8 שעות בדיוק
+    const ok = prepareWeek(input([shift('a', 0, 900, 480), shift('b', 1, 480, 480)], week({ activeDates: [DAYS[0]!, DAYS[1]!] })));
     expect(ok.exceptions.sleepShortfalls).toEqual([]);
-    expect(ok.sleepBlocks[0]!.range).toEqual({ date: DAYS[0], startMin: 1380, endMin: 1860 });
+    expect(ok.sleepBlocks[0]!.range).toEqual({ date: DAYS[0], startMin: 1410, endMin: 1890 });
     const bad = prepareWeek(input([shift('a', 0, 900, 480), shift('b', 1, 405, 480)], week({ activeDates: [DAYS[0]!, DAYS[1]!] })));
-    expect(bad.exceptions.sleepShortfalls).toEqual([{ date: DAYS[0], availableMin: 465, requiredMin: 480 }]);
+    expect(bad.exceptions.sleepShortfalls).toEqual([{ date: DAYS[0], availableMin: 405, requiredMin: 480 }]);
   });
 
   it('שינה חורגת מחלון הפעילות היומי (הוחלט ב-BUILD_PLAN 13)', () => {

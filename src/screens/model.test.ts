@@ -55,7 +55,7 @@ describe('בניית משמרות ומשימות', () => {
 
 describe('טופס משימה', () => {
   const base: TaskForm = {
-    title: ' קריאה ', categoryId: 'study', durationMin: 60, priority: 'medium', effort: 'light',
+    title: ' קריאה ', categoryId: 'study', durationMin: 60, travelMin: 0,
     flexibility: 'flexible', timesPerWeek: 2.7, splittable: true, minSegmentMin: 30, dependsOn: [],
   };
   it('בונה משימה תקינה בלי שדות ריקים', () => {
@@ -66,6 +66,13 @@ describe('טופס משימה', () => {
     expect(t.status).toBe('pending');
     expect('dueDate' in t).toBe(false);
     expect(t.constraints).toEqual({});
+    expect(t.priority).toBe('medium');
+    expect('travelMin' in t).toBe(false);
+  });
+  it('עדיפות עליונה רק לבריאות, ונסיעה נשמרת', () => {
+    const t = createTask('w1', { ...base, categoryId: 'health', travelMin: 20 }, 't2');
+    expect(t.priority).toBe('high');
+    expect(t.travelMin).toBe(20);
   });
   it('מאמת כותרת, משך ושעה קבועה בלי יום', () => {
     expect(validateTaskForm(base)).toEqual({});

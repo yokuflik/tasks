@@ -37,6 +37,8 @@ export interface Ctx {
   themeDays: Map<Id, Set<number>>;
   /** מסכת מגבלות לכל משימה גמישה (1 = מותר). */
   masks: Map<Id, Uint8Array>;
+  /** ריפוד נסיעה לכל כיוון (דקות, מעוגל למשבצות) לכל משימה. */
+  pads: Map<Id, number>;
   /** סדר עדיפות מספרי. */
   priorityWeight: Record<Priority, number>;
 }

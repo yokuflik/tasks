@@ -10,8 +10,9 @@ import type {
   UnplacedTask,
   Week,
 } from '../../contracts';
-import { absToRange, dayDiff, isFixedTask, prepareWeek, rangeToAbs, SLOTS_PER_DAY, taskMask } from '../base';
+import { absToRange, dayDiff, isFixedTask, prepareWeek, rangeToAbs, SLOTS_PER_DAY, taskMask, travelOf } from '../base';
 import type { PreparedWeek } from '../base';
+import { padOf } from './slots';
 import { MIN_VARIATION_DISTANCE, scheduleDistance } from './distance';
 import { improve } from './improve';
 import { PERSONALITIES, PERSONALITY_WEIGHTS } from './personalities';
@@ -90,6 +91,7 @@ export function buildPlan(input: GenerateInput, personality: Personality): Plan 
     baseFreeMin,
     themeDays: personality === 'themed' ? assignThemeDays(prep.schedulable, activeDays, baseFreeMin) : new Map(),
     masks,
+    pads: new Map(prep.schedulable.map((t) => [t.id, padOf(travelOf(t))])),
     priorityWeight: PRIORITY_WEIGHTS,
   };
 
