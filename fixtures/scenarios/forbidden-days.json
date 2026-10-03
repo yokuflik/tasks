@@ -1,0 +1,233 @@
+{
+  "name": "forbidden-days",
+  "description": "משימות עם ימים אסורים. אחת אסורה בכל הימים ולכן חייבת להיכשל.",
+  "settings": {
+    "timeZone": "Asia/Jerusalem",
+    "minSleepMin": 480,
+    "targetSleepMin": 540,
+    "minBreakMin": 15,
+    "warnOnSpecialDays": false,
+    "schemaVersion": 1
+  },
+  "categories": [
+    {
+      "id": "work",
+      "name": "עבודה",
+      "color": "#3b6fd4",
+      "icon": "briefcase",
+      "fixed": true,
+      "canCombine": false
+    },
+    {
+      "id": "study",
+      "name": "לימודים",
+      "color": "#7a54c8",
+      "icon": "book",
+      "fixed": false,
+      "canCombine": false
+    },
+    {
+      "id": "fitness",
+      "name": "אימונים",
+      "color": "#e0662f",
+      "icon": "dumbbell",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "health",
+      "name": "בריאות",
+      "color": "#2f9e73",
+      "icon": "heart",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "errands",
+      "name": "סידורים",
+      "color": "#c79a1d",
+      "icon": "bag",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "home",
+      "name": "בית ותחזוקה",
+      "color": "#8a6d4f",
+      "icon": "home",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "family",
+      "name": "משפחה",
+      "color": "#d6478c",
+      "icon": "people",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "friends",
+      "name": "חברים וחברה",
+      "color": "#1f9fb5",
+      "icon": "chat",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "leisure",
+      "name": "פנאי ותחביבים",
+      "color": "#a3b11f",
+      "icon": "palette",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "personal",
+      "name": "אישי ומנוחה",
+      "color": "#6b7a90",
+      "icon": "moon",
+      "fixed": false,
+      "canCombine": true
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t-only-mon",
+      "title": "t-only-mon",
+      "categoryId": "errands",
+      "durationMin": 60,
+      "priority": "medium",
+      "constraints": {
+        "forbiddenWeekdays": [
+          0,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-no-weekend",
+      "title": "t-no-weekend",
+      "categoryId": "errands",
+      "durationMin": 60,
+      "priority": "medium",
+      "constraints": {
+        "forbiddenWeekdays": [
+          5,
+          6
+        ]
+      },
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-never",
+      "title": "t-never",
+      "categoryId": "errands",
+      "durationMin": 60,
+      "priority": "medium",
+      "constraints": {
+        "forbiddenWeekdays": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-no-morning",
+      "title": "t-no-morning",
+      "categoryId": "errands",
+      "durationMin": 60,
+      "priority": "medium",
+      "constraints": {
+        "forbiddenWindows": [
+          {
+            "startMin": 0,
+            "endMin": 720
+          }
+        ]
+      },
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    }
+  ],
+  "week": {
+    "id": "w-forbidden-days",
+    "startDate": "2026-06-07",
+    "activeDates": [
+      "2026-06-07",
+      "2026-06-08",
+      "2026-06-09",
+      "2026-06-10",
+      "2026-06-11",
+      "2026-06-12",
+      "2026-06-13"
+    ],
+    "blockedTimes": [],
+    "taskIds": [
+      "t-only-mon",
+      "t-no-weekend",
+      "t-never",
+      "t-no-morning"
+    ],
+    "schedules": []
+  },
+  "specialDays": [
+    {
+      "date": "2026-06-13",
+      "kind": "shabbat",
+      "name": "שבת",
+      "hebrewDate": "כ״ח בסיוון תשפ״ו"
+    }
+  ],
+  "expect": {
+    "unplaced": [
+      {
+        "taskId": "t-never",
+        "reason": "forbidden_time"
+      }
+    ],
+    "placedTaskIds": [
+      "t-only-mon",
+      "t-no-weekend",
+      "t-no-morning"
+    ]
+  }
+}

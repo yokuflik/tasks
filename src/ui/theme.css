@@ -1,0 +1,252 @@
+/* מערכת עיצוב. משתני הצבע מוזרקים מ-tokens.ts (installTheme). רק מאפיינים לוגיים: תומך RTL מלא. */
+
+:root {
+  --font: 'SF Hebrew', 'Assistant', 'Heebo', -apple-system, system-ui, sans-serif;
+  --radius: 20px;
+  --radius-sm: 14px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --shadow: 0 2px 4px rgb(176 56 106 / 6%), 0 8px 24px rgb(176 56 106 / 10%);
+  --dur: 160ms;
+  --tap: 44px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-start: env(safe-area-inset-right, 0px);
+  --safe-end: env(safe-area-inset-left, 0px);
+}
+
+/* קטגוריה: בחירת סט הצבעים לפי מצב */
+.ui-task-card, .ui-time-block, .ui-distribution__segment, .ui-distribution__legend li {
+  --cat-bg: var(--cl-bg);
+  --cat-text: var(--cl-text);
+  --cat-accent: var(--cl-accent);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .ui-task-card,
+  :root:not([data-theme='light']) .ui-time-block,
+  :root:not([data-theme='light']) .ui-distribution__segment,
+  :root:not([data-theme='light']) .ui-distribution__legend li {
+    --cat-bg: var(--cd-bg);
+    --cat-text: var(--cd-text);
+    --cat-accent: var(--cd-accent);
+  }
+}
+:root[data-theme='dark'] .ui-task-card,
+:root[data-theme='dark'] .ui-time-block,
+:root[data-theme='dark'] .ui-distribution__segment,
+:root[data-theme='dark'] .ui-distribution__legend li {
+  --cat-bg: var(--cd-bg);
+  --cat-text: var(--cd-text);
+  --cat-accent: var(--cd-accent);
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 1rem;
+  line-height: 1.45;
+  touch-action: manipulation; /* בלי זום במגע כפול */
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ui-frame {
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  padding-block-start: var(--safe-top);
+  padding-block-end: var(--safe-bottom);
+  padding-inline-start: var(--safe-start);
+  padding-inline-end: var(--safe-end);
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  text-align: start;
+}
+
+.ui-icon { flex: none; }
+
+/* בסיס */
+.ui-button {
+  min-block-size: var(--tap);
+  padding-inline: var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font: inherit;
+  font-weight: 600;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+  transition: transform var(--dur) ease, opacity var(--dur) ease;
+}
+.ui-button:active { transform: scale(0.97); }
+.ui-button:disabled { opacity: 0.45; cursor: default; }
+.ui-button--primary { background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 78%, #e8b4a0)); color: var(--on-primary); box-shadow: var(--shadow); }
+.ui-button--secondary { background: var(--surface-raised); color: var(--text); border-color: var(--border); }
+.ui-button--ghost { background: transparent; color: var(--primary); }
+.ui-button:focus-visible, .ui-task-card__done:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+.ui-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+}
+.ui-card--raised { background: var(--surface-raised); box-shadow: var(--shadow); border-color: transparent; }
+
+.ui-badge {
+  display: inline-block;
+  padding-block: 2px;
+  padding-inline: var(--space-2);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.ui-badge--neutral { background: var(--surface-raised); color: var(--text); border: 1px solid var(--border); }
+.ui-badge--primary { background: var(--primary); color: var(--on-primary); }
+
+/* כרטיס משימה */
+.ui-task-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-block-size: 64px;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius);
+  background: var(--cat-bg);
+  color: var(--cat-text);
+  border: 1px solid transparent;
+  border-inline-start: 5px solid var(--cat-accent);
+  box-shadow: var(--shadow);
+  animation: ui-pop var(--dur) ease-out;
+}
+.ui-task-card.is-fixed { border: 2px solid var(--cat-accent); }
+.ui-task-card__icon { color: var(--cat-accent); display: flex; }
+.ui-task-card__body { flex: 1; min-inline-size: 0; }
+.ui-task-card__title { margin: 0; font-size: 1.0625rem; font-weight: 700; overflow-wrap: anywhere; }
+.ui-task-card__meta { margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); font-size: 0.875rem; }
+.ui-task-card.is-done .ui-task-card__title { text-decoration: line-through; opacity: 0.7; }
+.ui-task-card__done {
+  inline-size: var(--tap);
+  block-size: var(--tap);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 2px solid var(--cat-accent);
+  background: transparent;
+  color: transparent;
+  cursor: pointer;
+  transition: background var(--dur) ease, color var(--dur) ease;
+}
+.ui-task-card__done[aria-pressed='true'] { background: var(--cat-accent); color: var(--cat-bg); }
+
+/* בלוק זמן */
+.ui-time-block {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+  padding-block: var(--space-1);
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--cat-bg);
+  color: var(--cat-text);
+  border-inline-start: 4px solid var(--cat-accent);
+  font-size: 0.8125rem;
+  animation: ui-pop var(--dur) ease-out;
+}
+.ui-time-block.is-fixed { border: 2px solid var(--cat-accent); }
+.ui-time-block__title { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ui-time-block__time { font-size: 0.75rem; opacity: 0.9; font-variant-numeric: tabular-nums; }
+.ui-time-block .ui-icon { align-self: flex-end; opacity: 0.85; }
+
+/* שינה */
+.ui-sleep-band {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--sleep-bg);
+  color: var(--sleep-text);
+  font-size: 0.875rem;
+}
+.ui-sleep-band .ui-icon { color: var(--sleep-accent); }
+.ui-sleep-band__time { margin-inline-start: auto; font-variant-numeric: tabular-nums; }
+
+/* שבת וחגים: סימון בלבד */
+.ui-holiday-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding-block: 2px;
+  padding-inline: var(--space-2);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+.ui-holiday-badge--shabbat { background: var(--shabbat-bg); color: var(--shabbat-text); border-color: var(--shabbat-accent); }
+.ui-holiday-badge--holiday { background: var(--holiday-bg); color: var(--holiday-text); border-color: var(--holiday-accent); }
+.ui-holiday-badge--holiday_eve { background: var(--holiday_eve-bg); color: var(--holiday_eve-text); border-style: dashed; border-color: var(--holiday_eve-accent); }
+.ui-holiday-badge--chol_hamoed { background: var(--chol_hamoed-bg); color: var(--chol_hamoed-text); border-color: var(--chol_hamoed-accent); }
+
+.ui-shabbat-column {
+  background: var(--shabbat-bg);
+  color: var(--shabbat-text);
+  border-inline-start: 2px solid var(--shabbat-accent);
+  min-inline-size: 0;
+}
+.ui-shabbat-column__header {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2);
+  border-block-end: 1px solid var(--shabbat-accent);
+  font-size: 0.875rem;
+}
+.ui-shabbat-column__parasha { font-weight: 600; }
+.ui-shabbat-column__dates { font-size: 0.75rem; }
+.ui-shabbat-column__body { padding: var(--space-1); }
+
+/* עומס יומי */
+.ui-load-bar {
+  block-size: 6px;
+  border-radius: 3px;
+  background: var(--border);
+  overflow: hidden;
+}
+.ui-load-bar__fill {
+  display: block;
+  block-size: 100%;
+  border-radius: 3px;
+  background: var(--primary);
+  transition: inline-size var(--dur) ease;
+}
+.ui-load-bar--medium .ui-load-bar__fill { background: var(--holiday-accent); }
+.ui-load-bar--high .ui-load-bar__fill, .ui-load-bar--over .ui-load-bar__fill { background: #d12f2f; }
+
+/* חלוקת קטגוריות */
+.ui-distribution__bar {
+  display: flex;
+  block-size: 14px;
+  border-radius: 7px;
+  overflow: hidden;
+  gap: 2px;
+}
+.ui-distribution__segment { background: var(--cat-accent); min-inline-size: 4px; }
+.ui-distribution__legend { list-style: none; margin: var(--space-2) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); font-size: 0.8125rem; color: var(--text); }
+.ui-distribution__swatch { display: inline-block; inline-size: 10px; block-size: 10px; border-radius: 50%; background: var(--cat-accent); margin-inline-end: var(--space-1); }
+
+@keyframes ui-pop {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ui-task-card, .ui-time-block { animation: none; }
+  .ui-button, .ui-load-bar__fill, .ui-task-card__done { transition: none; }
+}

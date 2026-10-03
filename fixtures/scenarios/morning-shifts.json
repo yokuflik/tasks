@@ -1,0 +1,298 @@
+{
+  "name": "morning-shifts",
+  "description": "משמרות בוקר 07:00 עד 15:00 בימים ראשון עד חמישי.",
+  "settings": {
+    "timeZone": "Asia/Jerusalem",
+    "minSleepMin": 480,
+    "targetSleepMin": 540,
+    "minBreakMin": 15,
+    "warnOnSpecialDays": false,
+    "schemaVersion": 1
+  },
+  "categories": [
+    {
+      "id": "work",
+      "name": "עבודה",
+      "color": "#3b6fd4",
+      "icon": "briefcase",
+      "fixed": true,
+      "canCombine": false
+    },
+    {
+      "id": "study",
+      "name": "לימודים",
+      "color": "#7a54c8",
+      "icon": "book",
+      "fixed": false,
+      "canCombine": false
+    },
+    {
+      "id": "fitness",
+      "name": "אימונים",
+      "color": "#e0662f",
+      "icon": "dumbbell",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "health",
+      "name": "בריאות",
+      "color": "#2f9e73",
+      "icon": "heart",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "errands",
+      "name": "סידורים",
+      "color": "#c79a1d",
+      "icon": "bag",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "home",
+      "name": "בית ותחזוקה",
+      "color": "#8a6d4f",
+      "icon": "home",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "family",
+      "name": "משפחה",
+      "color": "#d6478c",
+      "icon": "people",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "friends",
+      "name": "חברים וחברה",
+      "color": "#1f9fb5",
+      "icon": "chat",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "leisure",
+      "name": "פנאי ותחביבים",
+      "color": "#a3b11f",
+      "icon": "palette",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "personal",
+      "name": "אישי ומנוחה",
+      "color": "#6b7a90",
+      "icon": "moon",
+      "fixed": false,
+      "canCombine": true
+    }
+  ],
+  "tasks": [
+    {
+      "id": "s-0",
+      "title": "משמרת",
+      "categoryId": "work",
+      "durationMin": 480,
+      "priority": "high",
+      "constraints": {
+        "fixedDate": "2026-06-07",
+        "fixedStartMin": 420
+      },
+      "flexibility": "fixed",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "s-1",
+      "title": "משמרת",
+      "categoryId": "work",
+      "durationMin": 480,
+      "priority": "high",
+      "constraints": {
+        "fixedDate": "2026-06-08",
+        "fixedStartMin": 420
+      },
+      "flexibility": "fixed",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "s-2",
+      "title": "משמרת",
+      "categoryId": "work",
+      "durationMin": 480,
+      "priority": "high",
+      "constraints": {
+        "fixedDate": "2026-06-09",
+        "fixedStartMin": 420
+      },
+      "flexibility": "fixed",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "s-3",
+      "title": "משמרת",
+      "categoryId": "work",
+      "durationMin": 480,
+      "priority": "high",
+      "constraints": {
+        "fixedDate": "2026-06-10",
+        "fixedStartMin": 420
+      },
+      "flexibility": "fixed",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "s-4",
+      "title": "משמרת",
+      "categoryId": "work",
+      "durationMin": 480,
+      "priority": "high",
+      "constraints": {
+        "fixedDate": "2026-06-11",
+        "fixedStartMin": 420
+      },
+      "flexibility": "fixed",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-gym",
+      "title": "t-gym",
+      "categoryId": "fitness",
+      "durationMin": 60,
+      "priority": "medium",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "heavy",
+      "timesPerWeek": 3,
+      "status": "pending"
+    },
+    {
+      "id": "t-study",
+      "title": "t-study",
+      "categoryId": "study",
+      "durationMin": 120,
+      "priority": "medium",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": true,
+        "minSegmentMin": 30
+      },
+      "dependsOn": [],
+      "effort": "heavy",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-groceries",
+      "title": "t-groceries",
+      "categoryId": "errands",
+      "durationMin": 45,
+      "priority": "medium",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "light",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-family",
+      "title": "t-family",
+      "categoryId": "family",
+      "durationMin": 120,
+      "priority": "medium",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "light",
+      "timesPerWeek": 1,
+      "status": "pending"
+    }
+  ],
+  "week": {
+    "id": "w-morning-shifts",
+    "startDate": "2026-06-07",
+    "activeDates": [
+      "2026-06-07",
+      "2026-06-08",
+      "2026-06-09",
+      "2026-06-10",
+      "2026-06-11",
+      "2026-06-12",
+      "2026-06-13"
+    ],
+    "blockedTimes": [],
+    "taskIds": [
+      "s-0",
+      "s-1",
+      "s-2",
+      "s-3",
+      "s-4",
+      "t-gym",
+      "t-study",
+      "t-groceries",
+      "t-family"
+    ],
+    "schedules": []
+  },
+  "specialDays": [
+    {
+      "date": "2026-06-13",
+      "kind": "shabbat",
+      "name": "שבת",
+      "hebrewDate": "כ״ח בסיוון תשפ״ו"
+    }
+  ],
+  "expect": {
+    "placedTaskIds": [
+      "t-gym",
+      "t-study",
+      "t-groceries",
+      "t-family"
+    ]
+  }
+}

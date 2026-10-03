@@ -1,0 +1,230 @@
+{
+  "name": "circular-dependency",
+  "description": "א תלוי ב-ג, ב תלוי ב-א, ג תלוי ב-ב. חייב לעצור עם דוח.",
+  "settings": {
+    "timeZone": "Asia/Jerusalem",
+    "minSleepMin": 480,
+    "targetSleepMin": 540,
+    "minBreakMin": 15,
+    "warnOnSpecialDays": false,
+    "schemaVersion": 1
+  },
+  "categories": [
+    {
+      "id": "work",
+      "name": "עבודה",
+      "color": "#3b6fd4",
+      "icon": "briefcase",
+      "fixed": true,
+      "canCombine": false
+    },
+    {
+      "id": "study",
+      "name": "לימודים",
+      "color": "#7a54c8",
+      "icon": "book",
+      "fixed": false,
+      "canCombine": false
+    },
+    {
+      "id": "fitness",
+      "name": "אימונים",
+      "color": "#e0662f",
+      "icon": "dumbbell",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "health",
+      "name": "בריאות",
+      "color": "#2f9e73",
+      "icon": "heart",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "errands",
+      "name": "סידורים",
+      "color": "#c79a1d",
+      "icon": "bag",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "home",
+      "name": "בית ותחזוקה",
+      "color": "#8a6d4f",
+      "icon": "home",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "family",
+      "name": "משפחה",
+      "color": "#d6478c",
+      "icon": "people",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "friends",
+      "name": "חברים וחברה",
+      "color": "#1f9fb5",
+      "icon": "chat",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "leisure",
+      "name": "פנאי ותחביבים",
+      "color": "#a3b11f",
+      "icon": "palette",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "personal",
+      "name": "אישי ומנוחה",
+      "color": "#6b7a90",
+      "icon": "moon",
+      "fixed": false,
+      "canCombine": true
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t-a",
+      "title": "t-a",
+      "categoryId": "errands",
+      "durationMin": 60,
+      "priority": "medium",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [
+        "t-c"
+      ],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-b",
+      "title": "t-b",
+      "categoryId": "errands",
+      "durationMin": 60,
+      "priority": "medium",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [
+        "t-a"
+      ],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-c",
+      "title": "t-c",
+      "categoryId": "errands",
+      "durationMin": 60,
+      "priority": "medium",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [
+        "t-b"
+      ],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-free",
+      "title": "t-free",
+      "categoryId": "errands",
+      "durationMin": 60,
+      "priority": "medium",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    }
+  ],
+  "week": {
+    "id": "w-circular-dependency",
+    "startDate": "2026-06-07",
+    "activeDates": [
+      "2026-06-07",
+      "2026-06-08",
+      "2026-06-09",
+      "2026-06-10",
+      "2026-06-11",
+      "2026-06-12",
+      "2026-06-13"
+    ],
+    "blockedTimes": [],
+    "taskIds": [
+      "t-a",
+      "t-b",
+      "t-c",
+      "t-free"
+    ],
+    "schedules": []
+  },
+  "specialDays": [
+    {
+      "date": "2026-06-13",
+      "kind": "shabbat",
+      "name": "שבת",
+      "hebrewDate": "כ״ח בסיוון תשפ״ו"
+    }
+  ],
+  "expect": {
+    "mustTerminateWithReport": true,
+    "placedTaskIds": [
+      "t-free"
+    ],
+    "unplaced": [
+      {
+        "taskId": "t-a",
+        "reason": "circular_dependency",
+        "relatedTaskIds": [
+          "t-a",
+          "t-b",
+          "t-c"
+        ]
+      },
+      {
+        "taskId": "t-b",
+        "reason": "circular_dependency",
+        "relatedTaskIds": [
+          "t-a",
+          "t-b",
+          "t-c"
+        ]
+      },
+      {
+        "taskId": "t-c",
+        "reason": "circular_dependency",
+        "relatedTaskIds": [
+          "t-a",
+          "t-b",
+          "t-c"
+        ]
+      }
+    ]
+  }
+}

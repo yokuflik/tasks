@@ -1,0 +1,196 @@
+{
+  "name": "task-larger-than-window",
+  "description": "חלון פעיל של 3 שעות בכל יום. משימה של 5 שעות שאינה ניתנת לפיצול גדולה מכל חלון.",
+  "settings": {
+    "timeZone": "Asia/Jerusalem",
+    "minSleepMin": 480,
+    "targetSleepMin": 540,
+    "minBreakMin": 15,
+    "warnOnSpecialDays": false,
+    "schemaVersion": 1
+  },
+  "categories": [
+    {
+      "id": "work",
+      "name": "עבודה",
+      "color": "#3b6fd4",
+      "icon": "briefcase",
+      "fixed": true,
+      "canCombine": false
+    },
+    {
+      "id": "study",
+      "name": "לימודים",
+      "color": "#7a54c8",
+      "icon": "book",
+      "fixed": false,
+      "canCombine": false
+    },
+    {
+      "id": "fitness",
+      "name": "אימונים",
+      "color": "#e0662f",
+      "icon": "dumbbell",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "health",
+      "name": "בריאות",
+      "color": "#2f9e73",
+      "icon": "heart",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "errands",
+      "name": "סידורים",
+      "color": "#c79a1d",
+      "icon": "bag",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "home",
+      "name": "בית ותחזוקה",
+      "color": "#8a6d4f",
+      "icon": "home",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "family",
+      "name": "משפחה",
+      "color": "#d6478c",
+      "icon": "people",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "friends",
+      "name": "חברים וחברה",
+      "color": "#1f9fb5",
+      "icon": "chat",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "leisure",
+      "name": "פנאי ותחביבים",
+      "color": "#a3b11f",
+      "icon": "palette",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "personal",
+      "name": "אישי ומנוחה",
+      "color": "#6b7a90",
+      "icon": "moon",
+      "fixed": false,
+      "canCombine": true
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t-big",
+      "title": "t-big",
+      "categoryId": "errands",
+      "durationMin": 300,
+      "priority": "medium",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-small",
+      "title": "t-small",
+      "categoryId": "errands",
+      "durationMin": 60,
+      "priority": "medium",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    }
+  ],
+  "week": {
+    "id": "w-task-larger-than-window",
+    "startDate": "2026-06-07",
+    "activeDates": [
+      "2026-06-07",
+      "2026-06-08",
+      "2026-06-09",
+      "2026-06-10",
+      "2026-06-11",
+      "2026-06-12",
+      "2026-06-13"
+    ],
+    "dayWindows": {
+      "2026-06-07": {
+        "startMin": 540,
+        "endMin": 720
+      },
+      "2026-06-08": {
+        "startMin": 540,
+        "endMin": 720
+      },
+      "2026-06-09": {
+        "startMin": 540,
+        "endMin": 720
+      },
+      "2026-06-10": {
+        "startMin": 540,
+        "endMin": 720
+      },
+      "2026-06-11": {
+        "startMin": 540,
+        "endMin": 720
+      },
+      "2026-06-12": {
+        "startMin": 540,
+        "endMin": 720
+      },
+      "2026-06-13": {
+        "startMin": 540,
+        "endMin": 720
+      }
+    },
+    "blockedTimes": [],
+    "taskIds": [
+      "t-big",
+      "t-small"
+    ],
+    "schedules": []
+  },
+  "specialDays": [
+    {
+      "date": "2026-06-13",
+      "kind": "shabbat",
+      "name": "שבת",
+      "hebrewDate": "כ״ח בסיוון תשפ״ו"
+    }
+  ],
+  "expect": {
+    "unplaced": [
+      {
+        "taskId": "t-big",
+        "reason": "larger_than_any_window"
+      }
+    ],
+    "placedTaskIds": [
+      "t-small"
+    ]
+  }
+}

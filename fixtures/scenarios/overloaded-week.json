@@ -1,0 +1,362 @@
+{
+  "name": "overloaded-week",
+  "description": "שבוע עמוס מדי: כ-70 שעות משימות. חלק חייב להיכשל עם סיבה.",
+  "settings": {
+    "timeZone": "Asia/Jerusalem",
+    "minSleepMin": 480,
+    "targetSleepMin": 540,
+    "minBreakMin": 15,
+    "warnOnSpecialDays": false,
+    "schemaVersion": 1
+  },
+  "categories": [
+    {
+      "id": "work",
+      "name": "עבודה",
+      "color": "#3b6fd4",
+      "icon": "briefcase",
+      "fixed": true,
+      "canCombine": false
+    },
+    {
+      "id": "study",
+      "name": "לימודים",
+      "color": "#7a54c8",
+      "icon": "book",
+      "fixed": false,
+      "canCombine": false
+    },
+    {
+      "id": "fitness",
+      "name": "אימונים",
+      "color": "#e0662f",
+      "icon": "dumbbell",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "health",
+      "name": "בריאות",
+      "color": "#2f9e73",
+      "icon": "heart",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "errands",
+      "name": "סידורים",
+      "color": "#c79a1d",
+      "icon": "bag",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "home",
+      "name": "בית ותחזוקה",
+      "color": "#8a6d4f",
+      "icon": "home",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "family",
+      "name": "משפחה",
+      "color": "#d6478c",
+      "icon": "people",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "friends",
+      "name": "חברים וחברה",
+      "color": "#1f9fb5",
+      "icon": "chat",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "leisure",
+      "name": "פנאי ותחביבים",
+      "color": "#a3b11f",
+      "icon": "palette",
+      "fixed": false,
+      "canCombine": true
+    },
+    {
+      "id": "personal",
+      "name": "אישי ומנוחה",
+      "color": "#6b7a90",
+      "icon": "moon",
+      "fixed": false,
+      "canCombine": true
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t-0",
+      "title": "t-0",
+      "categoryId": "errands",
+      "durationMin": 300,
+      "priority": "high",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-1",
+      "title": "t-1",
+      "categoryId": "errands",
+      "durationMin": 300,
+      "priority": "high",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-2",
+      "title": "t-2",
+      "categoryId": "errands",
+      "durationMin": 300,
+      "priority": "high",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-3",
+      "title": "t-3",
+      "categoryId": "errands",
+      "durationMin": 300,
+      "priority": "high",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-4",
+      "title": "t-4",
+      "categoryId": "errands",
+      "durationMin": 300,
+      "priority": "low",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-5",
+      "title": "t-5",
+      "categoryId": "errands",
+      "durationMin": 300,
+      "priority": "low",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-6",
+      "title": "t-6",
+      "categoryId": "errands",
+      "durationMin": 300,
+      "priority": "low",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-7",
+      "title": "t-7",
+      "categoryId": "errands",
+      "durationMin": 300,
+      "priority": "low",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-8",
+      "title": "t-8",
+      "categoryId": "errands",
+      "durationMin": 300,
+      "priority": "low",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-9",
+      "title": "t-9",
+      "categoryId": "errands",
+      "durationMin": 300,
+      "priority": "low",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-10",
+      "title": "t-10",
+      "categoryId": "errands",
+      "durationMin": 300,
+      "priority": "low",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-11",
+      "title": "t-11",
+      "categoryId": "errands",
+      "durationMin": 300,
+      "priority": "low",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-12",
+      "title": "t-12",
+      "categoryId": "errands",
+      "durationMin": 300,
+      "priority": "low",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    },
+    {
+      "id": "t-13",
+      "title": "t-13",
+      "categoryId": "errands",
+      "durationMin": 300,
+      "priority": "low",
+      "constraints": {},
+      "flexibility": "flexible",
+      "split": {
+        "splittable": false
+      },
+      "dependsOn": [],
+      "effort": "medium",
+      "timesPerWeek": 1,
+      "status": "pending"
+    }
+  ],
+  "week": {
+    "id": "w-overloaded-week",
+    "startDate": "2026-06-07",
+    "activeDates": [
+      "2026-06-07",
+      "2026-06-08",
+      "2026-06-09",
+      "2026-06-10",
+      "2026-06-11",
+      "2026-06-12",
+      "2026-06-13"
+    ],
+    "blockedTimes": [],
+    "taskIds": [
+      "t-0",
+      "t-1",
+      "t-2",
+      "t-3",
+      "t-4",
+      "t-5",
+      "t-6",
+      "t-7",
+      "t-8",
+      "t-9",
+      "t-10",
+      "t-11",
+      "t-12",
+      "t-13"
+    ],
+    "schedules": []
+  },
+  "specialDays": [
+    {
+      "date": "2026-06-13",
+      "kind": "shabbat",
+      "name": "שבת",
+      "hebrewDate": "כ״ח בסיוון תשפ״ו"
+    }
+  ],
+  "expect": {
+    "minUnplacedCount": 1
+  }
+}
