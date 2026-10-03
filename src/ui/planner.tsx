@@ -102,22 +102,26 @@ export interface SleepBandProps {
   startMin: Minutes;
   endMin: Minutes;
   locked?: boolean;
+  /** הטקסט לא נכנס: בלי שעות ומשך (נשארים בתיאור הנגישות). */
+  compact?: boolean;
   style?: StyleMap;
 }
 
 /** רצועת שינה: כהה ושקטה, ברורה כשמורה. */
 export function SleepBand(p: SleepBandProps): JSX.Element {
   return (
-    <div class="ui-sleep-band" role="img" aria-label={`שינה ${formatRange(p.startMin, p.endMin)}`} {...(p.style ? { style: p.style } : {})}>
+    <div class={`ui-sleep-band${p.compact ? ' ui-sleep-band--compact' : ''}`} role="img" aria-label={`שינה ${formatRange(p.startMin, p.endMin)}`} {...(p.style ? { style: p.style } : {})}>
       <Icon name="moon" size={16} />
       <span>שינה</span>
-      <span class="ui-sleep-band__time">
-        <bdi dir="ltr" class="ui-sleep-band__range">
-          <span class="ui-sleep-band__start">{formatTime(p.startMin)}</span>
-          <span class="ui-sleep-band__end">{formatTime(p.endMin)}</span>
-        </bdi>
-        <bdi class="ui-sleep-band__dur">{formatDuration(p.endMin - p.startMin)}</bdi>
-      </span>
+      {!p.compact && (
+        <span class="ui-sleep-band__time">
+          <bdi dir="ltr" class="ui-sleep-band__range">
+            <span class="ui-sleep-band__start">{formatTime(p.startMin)}</span>
+            <span class="ui-sleep-band__end">{formatTime(p.endMin)}</span>
+          </bdi>
+          <bdi class="ui-sleep-band__dur">{formatDuration(p.endMin - p.startMin)}</bdi>
+        </span>
+      )}
       {p.locked && <Icon name="lock" size={14} title="נעול" />}
     </div>
   );

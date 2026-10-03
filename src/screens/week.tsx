@@ -25,6 +25,8 @@ import type { ScreenProps } from './types';
 
 /** פיקסלים לדקה בגריד השבוע. */
 export const PX_PER_MIN = 0.5;
+/** גובה מינימלי (בפיקסלים) כדי להציג בבלוק שינה את השעות והמשך. */
+const SLEEP_FULL_MIN_PX = 100;
 
 interface DragState {
   blockId: Id;
@@ -66,10 +68,12 @@ function BlockSheet({
   };
 
   return (
-    <div class="scr-sheet" role="dialog" aria-modal="true" aria-label={`פרטי ${title}`} data-sheet={block.id}>
+    <div class="scr-sheet" role="dialog" aria-modal="true" aria-label={`פרטי ${title}`} data-sheet={block.id}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div class="scr-sheet__panel">
         <h2 class="scr-h2">{title}{cat ? ` · ${cat.name}` : ''}</h2>
-        <p class="scr-muted">{formatTime(block.range.startMin)}–{formatTime(block.range.endMin)} · {blockMinutes(block)} דקות</p>
+        <p class="scr-muted">{formatTime(block.range.startMin)}–{formatTime(block.range.endMin)}</p>
+        <p class="scr-muted" data-sheet-duration>אורך: {blockMinutes(block)} דקות</p>
         {fixed && <p class="scr-muted"><Icon name="lock" size={14} /> משימה קבועה: אי אפשר להזיז</p>}
         {movable && (
           <div class="scr-form-row">
@@ -200,7 +204,8 @@ export function WeekScreen(p: ScreenProps): JSX.Element {
     if (b.kind === 'sleep') {
       return (
         <div key={`${b.id}-${seg.continuation ? 'c' : 's'}`} class="scr-block" style={style} data-block={b.id} data-kind="sleep" {...handlers}>
-          <SleepBand startMin={b.range.startMin} endMin={b.range.endMin} locked={b.locked} />
+          <SleepBand startMin={b.range.startMin} endMin={b.range.endMin} locked={b.locked}
+            compact={(seg.endMin - seg.startMin) * PX_PER_MIN < SLEEP_FULL_MIN_PX} />
         </div>
       );
     }
@@ -277,7 +282,7 @@ export function WeekScreen(p: ScreenProps): JSX.Element {
         <Button variant="secondary" onClick={() => p.actions.exportIcs()}>ייצוא ליומן (ICS)</Button>
       </div>
       {notice && <p class="scr-error" role="alert">{notice}</p>}
-      <p class="scr-muted">גרור בלוק להזזה, לחיצה ארוכה לנעילה, נגיעה לפרטים.</p>
+      <p class="scr-muted">גרור בלוק להזזה, לחיצה ארוכה לפרטים.</p>
       <div class="scr-grid" ref={gridRef} data-grid>
         <div class="scr-gutter" aria-hidden="true">
           <div class="scr-col__headspace" />

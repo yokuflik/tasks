@@ -184,6 +184,7 @@ body {
 .ui-sleep-band__range { unicode-bidi: isolate; direction: ltr; white-space: nowrap; display: flex; flex-direction: column; }
 .ui-sleep-band__start::after { content: ' –'; }
 .ui-sleep-band__start { margin-inline-start: 6px; }
+.ui-sleep-band--compact { flex-wrap: nowrap; padding-block: 2px; }
 .ui-sleep-band__dur { unicode-bidi: isolate; white-space: nowrap; opacity: 0.85; }
 
 /* נסיעה */
